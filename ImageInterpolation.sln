@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageInterpolation", "ImageInterpolation\ImageInterpolation.csproj", "{F093263D-3711-4731-8C6E-77107CA4BDFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F093263D-3711-4731-8C6E-77107CA4BDFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F093263D-3711-4731-8C6E-77107CA4BDFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F093263D-3711-4731-8C6E-77107CA4BDFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F093263D-3711-4731-8C6E-77107CA4BDFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8F418DC4-DC78-4682-9355-915A0346DE66}
+	EndGlobalSection
+EndGlobal
