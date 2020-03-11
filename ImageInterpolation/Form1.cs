@@ -88,12 +88,23 @@ namespace Lanczos
 
             //MessageBox.Show(s);
 
-            MessageBox.Show(sw.ElapsedMilliseconds.ToString());
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
         private void btn_SART_Click(object sender, EventArgs e)
         {
+            var sw = new Stopwatch();
+            sw.Start();
 
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+            var scaledImage = GetScaledImage(initialImage);
+
+            var resampledImage = SARTInterpolator.Resample(scaledImage);
+
+            pictureBox2.Image = resampledImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            sw.Stop();
         }
 
         void btn_method2_Click(object sender, EventArgs e)
@@ -105,8 +116,7 @@ namespace Lanczos
 
             var resampledImage = LanczosInterpolator.Resample(initialImage);
 
-            pictureBox2.Image = resampledImage;
-      
+            pictureBox2.Image = resampledImage;      
             pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
@@ -127,7 +137,7 @@ namespace Lanczos
 
             //string s =  10 * Math.Log((255 * 255 / (f / (3 * n * m))), 10) + "\n";            
 
-            MessageBox.Show(sw.ElapsedMilliseconds.ToString());
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
         
         private Bitmap GetScaledImage(Bitmap initialImage)

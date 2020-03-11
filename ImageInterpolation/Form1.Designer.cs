@@ -52,7 +52,7 @@
             // 
             // btn_edge
             // 
-            this.btn_edge.Location = new System.Drawing.Point(519, 36);
+            this.btn_edge.Location = new System.Drawing.Point(694, 36);
             this.btn_edge.Name = "btn_edge";
             this.btn_edge.Size = new System.Drawing.Size(121, 23);
             this.btn_edge.TabIndex = 1;
@@ -61,7 +61,7 @@
             // 
             // btn_lanzcos
             // 
-            this.btn_lanzcos.Location = new System.Drawing.Point(710, 35);
+            this.btn_lanzcos.Location = new System.Drawing.Point(857, 36);
             this.btn_lanzcos.Name = "btn_lanzcos";
             this.btn_lanzcos.Size = new System.Drawing.Size(122, 23);
             this.btn_lanzcos.TabIndex = 2;
@@ -72,7 +72,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(36, 98);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(600, 600);
+            this.pictureBox1.Size = new System.Drawing.Size(400, 400);
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             // 
@@ -103,7 +103,7 @@
             // 
             // btn_SART
             // 
-            this.btn_SART.Location = new System.Drawing.Point(907, 36);
+            this.btn_SART.Location = new System.Drawing.Point(1019, 35);
             this.btn_SART.Name = "btn_SART";
             this.btn_SART.Size = new System.Drawing.Size(75, 23);
             this.btn_SART.TabIndex = 7;
