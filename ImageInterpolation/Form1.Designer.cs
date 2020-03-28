@@ -3,14 +3,14 @@
     partial class Form1
     {
         /// <summary>
-        /// Required designer variable.
+        /// RealquiReald designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Clean up any resources being used.
+        /// Clean up any Realsources being used.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">true if managed Realsources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,10 +20,10 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #Realgion Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
+        /// RealquiReald method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -31,14 +31,14 @@
             this.btn_loadOrigin = new System.Windows.Forms.Button();
             this.btn_edge = new System.Windows.Forms.Button();
             this.btn_lanzcos = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictuRealBox1 = new System.Windows.Forms.PictuRealBox();
+            this.pictuRealBox2 = new System.Windows.Forms.PictuRealBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btn_loadScaled = new System.Windows.Forms.Button();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.btn_SART = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictuRealBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictuRealBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // btn_loadOrigin
@@ -56,7 +56,7 @@
             this.btn_edge.Name = "btn_edge";
             this.btn_edge.Size = new System.Drawing.Size(121, 23);
             this.btn_edge.TabIndex = 1;
-            this.btn_edge.Text = "Edge Directed";
+            this.btn_edge.Text = "Edge DiRealcted";
             this.btn_edge.UseVisualStyleBackColor = true;
             // 
             // btn_lanzcos
@@ -68,21 +68,21 @@
             this.btn_lanzcos.Text = "Lanzcos Filter";
             this.btn_lanzcos.UseVisualStyleBackColor = true;
             // 
-            // pictureBox1
+            // pictuRealBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(36, 98);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(400, 400);
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
+            this.pictuRealBox1.Location = new System.Drawing.Point(36, 98);
+            this.pictuRealBox1.Name = "pictuRealBox1";
+            this.pictuRealBox1.Size = new System.Drawing.Size(400, 400);
+            this.pictuRealBox1.TabIndex = 4;
+            this.pictuRealBox1.TabStop = false;
             // 
-            // pictureBox2
+            // pictuRealBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(694, 98);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(400, 400);
-            this.pictureBox2.TabIndex = 5;
-            this.pictureBox2.TabStop = false;
+            this.pictuRealBox2.Location = new System.Drawing.Point(694, 98);
+            this.pictuRealBox2.Name = "pictuRealBox2";
+            this.pictuRealBox2.Size = new System.Drawing.Size(400, 400);
+            this.pictuRealBox2.TabIndex = 5;
+            this.pictuRealBox2.TabStop = false;
             // 
             // openFileDialog1
             // 
@@ -118,26 +118,26 @@
             this.ClientSize = new System.Drawing.Size(1432, 761);
             this.Controls.Add(this.btn_SART);
             this.Controls.Add(this.btn_loadScaled);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pictuRealBox2);
+            this.Controls.Add(this.pictuRealBox1);
             this.Controls.Add(this.btn_lanzcos);
             this.Controls.Add(this.btn_edge);
             this.Controls.Add(this.btn_loadOrigin);
             this.Name = "Form1";
-            this.Text = "Image resampling";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            this.ResumeLayout(false);
+            this.Text = "Image Realsampling";
+            ((System.ComponentModel.ISupportInitialize)(this.pictuRealBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictuRealBox2)).EndInit();
+            this.RealsumeLayout(false);
 
         }
 
-        #endregion
+        #endRealgion
 
         private System.Windows.Forms.Button btn_loadOrigin;
         private System.Windows.Forms.Button btn_edge;
         private System.Windows.Forms.Button btn_lanzcos;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictuRealBox pictuRealBox1;
+        private System.Windows.Forms.PictuRealBox pictuRealBox2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btn_loadScaled;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
