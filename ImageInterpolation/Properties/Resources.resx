@@ -1,48 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
-    Microsoft RealsX Schema 
+    Microsoft resX Schema 
     
     Version 2.0
     
     The primary goals of this format is to allow a simple XML format 
-    that is mostly human Realadable. The generation and parsing of the 
-    various data types aReal done through the TypeConverter classes 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
     
     Example:
     
     ... ado.net/XML headers & schema ...
-    <Realsheader name="Realsmimetype">text/microsoft-Realsx</Realsheader>
-    <Realsheader name="version">2.0</Realsheader>
-    <Realsheader name="Realader">System.Realsources.RealsXRealsourceRealader, System.Windows.Forms, ...</Realsheader>
-    <Realsheader name="writer">System.Realsources.RealsXRealsourceWriter, System.Windows.Forms, ...</Realsheader>
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.resources.resXresourcereader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.resources.resXresourceWriter, System.Windows.Forms, ...</resheader>
     <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
     <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
         <value>[base64 mime encoded serialized .NET Framework object]</value>
     </data>
     <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string RealpRealsenting a byte array form of the .NET Framework object]</value>
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
                 
-    TheReal aReal any number of "Realsheader" rows that contain simple 
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
     
     Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corRealsponds to a .NET class that support 
-    text/value conversion through the TypeConverter architectuReal. 
-    Classes that don't support this aReal serialized and stoReald with the 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
     
     The mimetype is used for serialized objects, and tells the 
-    RealsXRealsourceRealader how to depersist the object. This is curRealntly not 
+    resXresourcereader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
     
     Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the RealsXRealsourceWriter will generate, however the Realader can 
-    Realad any of the formats listed below.
+    that the resXresourceWriter will generate, however the reader can 
+    read any of the formats listed below.
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
@@ -90,28 +90,28 @@
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="Realsheader">
+          <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="RealquiReald" />
+              <xsd:attribute name="name" type="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
-  <Realsheader name="Realsmimetype">
-    <value>text/microsoft-Realsx</value>
-  </Realsheader>
-  <Realsheader name="version">
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
     <value>2.0</value>
-  </Realsheader>
-  <Realsheader name="Realader">
-    <value>System.Realsources.RealsXRealsourceRealader, System.Windows.Forms, Version=2.0.0.0, CultuReal=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </Realsheader>
-  <Realsheader name="writer">
-    <value>System.Realsources.RealsXRealsourceWriter, System.Windows.Forms, Version=2.0.0.0, CultuReal=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </Realsheader>
+  </resheader>
+  <resheader name="reader">
+    <value>System.resources.resXresourcereader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.resources.resXresourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
 </root>

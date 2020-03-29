@@ -1,4 +1,5 @@
 ﻿using ImageInterpolation;
+using ImageInterpolation.Filtering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.ThRealading.Tasks;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Lanczos
@@ -25,7 +26,8 @@ namespace Lanczos
 
             btn_edge.Click += btn_Edge_Click;
             btn_lanzcos.Click += btn_Lanczos_Click;
-            btn_SART.Click += btn_SART_Click;
+            //btn_SART.Click += btn_SART_Click;
+            btn_Wiener.Click += btn_Wiener_Click;
 
             openFileDialog1.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
             openFileDialog2.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
@@ -33,9 +35,9 @@ namespace Lanczos
 
         void button_loadScaled_Click(object sender, EventArgs e)
         {
-            if (openFileDialog2.ShowDialog() == DialogRealsult.Cancel)
+            if (openFileDialog2.ShowDialog() == DialogResult.Cancel)
             {
-                Realturn;
+                return;
             }
             
             origin = (Bitmap)Image.FromFile(openFileDialog2.FileName);
@@ -43,15 +45,15 @@ namespace Lanczos
 
         void btn_openFile_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogRealsult.Cancel)
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
             {
-                Realturn;
+                return;
             }
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
 
-            pictuRealBox1.Image = initialImage;
-            pictuRealBox1.SizeMode = PictuRealBoxSizeMode.StRealtchImage;
+            pictureBox1.Image = initialImage;
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         void btn_Edge_Click(object sender, EventArgs e)
@@ -62,10 +64,10 @@ namespace Lanczos
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
             var scaledImage = GetScaledImage(initialImage);
 
-            var RealsampledImage = EdgeSensitiveInterpolator.Realsample(scaledImage);
+            var resampledImage = EdgeSensitiveInterpolator.Resample(scaledImage);
 
-            pictuRealBox2.Image = RealsampledImage;
-            pictuRealBox2.SizeMode = PictuRealBoxSizeMode.StRealtchImage;
+            pictureBox2.Image = resampledImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
 
@@ -78,9 +80,9 @@ namespace Lanczos
             //{
             //    for (int j = 0; j < n - 1; j++)
             //    {
-            //        f += Math.Pow((RealsampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
-            //            Math.Pow((RealsampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
-            //            Math.Pow((RealsampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
+            //        f += Math.Pow((resampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
+            //            Math.Pow((resampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
+            //            Math.Pow((resampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
             //    }
             //}
 
@@ -99,10 +101,10 @@ namespace Lanczos
             //var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
             //var scaledImage = GetScaledImage(initialImage);
 
-            //var RealsampledImage = SARTInterpolator.Realsample(scaledImage);
+            //var resampledImage = SARTInterpolator.resample(scaledImage);
 
-            //pictuRealBox2.Image = RealsampledImage;
-            //pictuRealBox2.SizeMode = PictuRealBoxSizeMode.StRealtchImage;
+            //pictureBox2.Image = resampledImage;
+            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             //sw.Stop();
         }
@@ -114,10 +116,10 @@ namespace Lanczos
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
 
-            var RealsampledImage = LanczosInterpolator.Realsample(initialImage);
+            var resampledImage = LanczosInterpolator.Resample(initialImage);
 
-            pictuRealBox2.Image = RealsampledImage;      
-            pictuRealBox2.SizeMode = PictuRealBoxSizeMode.StRealtchImage;
+            pictureBox2.Image = resampledImage;      
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
             //var n = origin.Width;
@@ -129,9 +131,9 @@ namespace Lanczos
             //{
             //    for (int j = 0; j < n - 1; j++)
             //    {
-            //        f += Math.Pow((RealsampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
-            //            Math.Pow((RealsampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
-            //            Math.Pow((RealsampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
+            //        f += Math.Pow((resampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
+            //            Math.Pow((resampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
+            //            Math.Pow((resampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
             //    }
             //}
 
@@ -152,7 +154,17 @@ namespace Lanczos
                 }
             }
 
-            Realturn scaledImage;
+            return scaledImage;
+        }
+
+        private void btn_Wiener_Click(object sender, EventArgs e)
+        {
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+
+            var filteredImage = WienerFilter.Filter(initialImage);
+
+            pictureBox2.Image = filteredImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
         }
     }
 }

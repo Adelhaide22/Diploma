@@ -9,7 +9,7 @@ namespace ImageInterpolation
 {
     static class LanczosInterpolator
     {                       
-        static float Scale = 2;
+        static float Scale = 1;
 
         static float ColB;
         static float ColR;
