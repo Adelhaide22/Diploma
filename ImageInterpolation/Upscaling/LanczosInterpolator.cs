@@ -16,7 +16,6 @@ namespace ImageInterpolation
         static float ColG;
         
         static Bitmap Extended;
-        static Bitmap Output;
 
         static int Window = 5;
 
@@ -28,7 +27,7 @@ namespace ImageInterpolation
             Extended = new Bitmap(Input.Width + Window * 2, Input.Height + Window * 2);
             FillExtended(Input);
 
-            Output = new Bitmap(ToInt(Input.Width * Scale), ToInt(Input.Height * Scale));
+            var Output = new Bitmap(ToInt(Input.Width * Scale), ToInt(Input.Height * Scale));
 
             CoordX = new float[ToInt(Scale * Input.Width)];
             CoordY = new float[ToInt(Scale * Input.Height)];
@@ -42,12 +41,12 @@ namespace ImageInterpolation
                 CoordY[j] = j / Scale;
             }
 
-            Filtering();
+            Filtering(Output);
 
             return Output;
         }
 
-        static void FillExtended(Bitmap Input)
+        public static void FillExtended(Bitmap Input)
         {
             for (int i = 0; i < Input.Width; i++)
             {
@@ -83,7 +82,7 @@ namespace ImageInterpolation
             }
         }
 
-        static void Filtering()
+        public static void Filtering(Bitmap Output)
         {
             for (int i = 0; i < Output.Width; i++)
             {
@@ -106,7 +105,7 @@ namespace ImageInterpolation
             }
         }
 
-        static float Calc(float x, float y, string color)
+        public static float Calc(float x, float y, string color)
         {
             float x0 = x;
             float y0 = y;

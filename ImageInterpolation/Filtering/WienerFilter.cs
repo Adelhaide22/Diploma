@@ -55,14 +55,53 @@ namespace ImageInterpolation.Filtering
 
         public static Bitmap Filter(Bitmap initialImage)
         {
+            var filteredImage = new Bitmap(initialImage);
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < initialImage.Height; i++)
             {
-                for (int i = 0; i < length; i++)
+                for (int j = 0; j < initialImage.Width; j++)
                 {
-
+                    var core = LanczosInterpolator.Calc(i, j, "red");
+                    filteredImage.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(GetWiener(core, initialImage, i, j))));
                 }
             }
+
+            return filteredImage;
+        }
+
+        private static double GetWiener(float core, Bitmap initialImage, int i, int j)
+        {
+            return (1 / core) * ((core * core) / (core * core + GetSNR(initialImage))) * initialImage.GetPixel(i, j).ToArgb();
+        }
+
+        private static double GetSNR(Bitmap initialImage)
+        {
+            var n = initialImage.Width;
+            var m = initialImage.Height;
+
+            var median = 0;
+            var dispersion = 0.0;
+
+            for (int i = 0; i < m - 1; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    median += initialImage.GetPixel(i, j).R;
+                }
+            }
+            median /= (n * m);
+
+            for (int i = 0; i < m - 1; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    dispersion += Math.Pow((double)(initialImage.GetPixel(i, j).R - median), 2);
+                }
+            }
+
+            var snr = median / Math.Sqrt(dispersion);
+            return snr;
         }
     }
 }
+ 
