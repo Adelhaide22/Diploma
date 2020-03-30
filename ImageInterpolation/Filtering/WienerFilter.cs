@@ -57,11 +57,11 @@ namespace ImageInterpolation.Filtering
         {
             var filteredImage = new Bitmap(initialImage);
 
-            for (int i = 0; i < initialImage.Height; i++)
+            for (int i = 0; i < initialImage.Width; i++)
             {
-                for (int j = 0; j < initialImage.Width; j++)
+                for (int j = 0; j < initialImage.Height; j++)
                 {
-                    var core = LanczosInterpolator.Calc(i, j, "red");
+                    var core = LanczosInterpolator.Calc(initialImage, i, j, "red");
                     filteredImage.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(GetWiener(core, initialImage, i, j))));
                 }
             }

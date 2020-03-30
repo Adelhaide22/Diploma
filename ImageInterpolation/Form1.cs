@@ -159,12 +159,15 @@ namespace Lanczos
 
         private void btn_Wiener_Click(object sender, EventArgs e)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
 
             var filteredImage = WienerFilter.Filter(initialImage);
 
             pictureBox2.Image = filteredImage;
             pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            sw.Stop();
         }
     }
 }

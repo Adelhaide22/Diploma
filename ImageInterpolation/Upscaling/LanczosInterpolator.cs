@@ -14,18 +14,16 @@ namespace ImageInterpolation
         static float ColB;
         static float ColR;
         static float ColG;
-        
-        static Bitmap Extended;
 
-        static int Window = 5;
+        static int Window = 3;
 
         static float[] CoordX;
         static float[] CoordY;
                 
         public static Bitmap Resample(Bitmap Input)
         {
-            Extended = new Bitmap(Input.Width + Window * 2, Input.Height + Window * 2);
-            FillExtended(Input);
+            var Extended = new Bitmap(Input.Width + Window * 2, Input.Height + Window * 2); //!!!206
+            FillExtended(Input, Extended);
 
             var Output = new Bitmap(ToInt(Input.Width * Scale), ToInt(Input.Height * Scale));
 
@@ -41,12 +39,12 @@ namespace ImageInterpolation
                 CoordY[j] = j / Scale;
             }
 
-            Filtering(Output);
+            Filtering(Extended, Output);
 
             return Output;
         }
 
-        public static void FillExtended(Bitmap Input)
+        public static void FillExtended(Bitmap Input, Bitmap Extended)
         {
             for (int i = 0; i < Input.Width; i++)
             {
@@ -82,15 +80,15 @@ namespace ImageInterpolation
             }
         }
 
-        public static void Filtering(Bitmap Output)
+        public static void Filtering(Bitmap Extended, Bitmap Output)
         {
             for (int i = 0; i < Output.Width; i++)
             {
                 for (int j = 0; j < Output.Height; j++)
                 {
-                    ColR = Calc(CoordX[i], CoordY[j], "red");
-                    ColG = Calc(CoordX[i], CoordY[j], "green");
-                    ColB = Calc(CoordX[i], CoordY[j], "blue");
+                    ColR = Calc(Extended, CoordX[i], CoordY[j], "red");
+                    ColG = Calc(Extended, CoordX[i], CoordY[j], "green");
+                    ColB = Calc(Extended, CoordX[i], CoordY[j], "blue");
 
                     if (ColR < 0) ColR = 0;
                     if (ColG < 0) ColG = 0;
@@ -105,7 +103,7 @@ namespace ImageInterpolation
             }
         }
 
-        public static float Calc(float x, float y, string color)
+        public static float Calc(Bitmap Extended, float x, float y, string color)
         {
             float x0 = x;
             float y0 = y;
