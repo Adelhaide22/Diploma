@@ -141,7 +141,21 @@ namespace Lanczos
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
-        
+        private void btn_Wiener_Click(object sender, EventArgs e)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+            var filteredImage = WienerFilter.Filter(initialImage);
+
+            pictureBox2.Image = filteredImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            sw.Stop();
+
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        }
+
         private Bitmap GetScaledImage(Bitmap initialImage)
         {
             var scaledImage = new Bitmap(initialImage.Width * 2, initialImage.Height * 2);
@@ -155,19 +169,6 @@ namespace Lanczos
             }
 
             return scaledImage;
-        }
-
-        private void btn_Wiener_Click(object sender, EventArgs e)
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-
-            var filteredImage = WienerFilter.Filter(initialImage);
-
-            pictureBox2.Image = filteredImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
-            sw.Stop();
-        }
+        }        
     }
 }

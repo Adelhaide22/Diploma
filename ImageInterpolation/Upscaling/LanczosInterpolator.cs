@@ -9,16 +9,12 @@ namespace ImageInterpolation
 {
     static class LanczosInterpolator
     {                       
-        static float Scale = 1;
-
-        static float ColB;
-        static float ColR;
-        static float ColG;
-
+        static double Scale = 1;
+        
         static int Window = 3;
 
-        static float[] CoordX;
-        static float[] CoordY;
+        static double[] CoordX;
+        static double[] CoordY;
                 
         public static Bitmap Resample(Bitmap Input)
         {
@@ -27,8 +23,8 @@ namespace ImageInterpolation
 
             var Output = new Bitmap(ToInt(Input.Width * Scale), ToInt(Input.Height * Scale));
 
-            CoordX = new float[ToInt(Scale * Input.Width)];
-            CoordY = new float[ToInt(Scale * Input.Height)];
+            CoordX = new double[ToInt(Scale * Input.Width)];
+            CoordY = new double[ToInt(Scale * Input.Height)];
 
             for (int i = 0; i < ToInt(Scale * Input.Width); i++)
             {
@@ -86,9 +82,9 @@ namespace ImageInterpolation
             {
                 for (int j = 0; j < Output.Height; j++)
                 {
-                    ColR = Calc(Extended, CoordX[i], CoordY[j], "red");
-                    ColG = Calc(Extended, CoordX[i], CoordY[j], "green");
-                    ColB = Calc(Extended, CoordX[i], CoordY[j], "blue");
+                    double ColR = Calc(Extended, CoordX[i], CoordY[j], "red");
+                    double ColG = Calc(Extended, CoordX[i], CoordY[j], "green");
+                    double ColB = Calc(Extended, CoordX[i], CoordY[j], "blue");
 
                     if (ColR < 0) ColR = 0;
                     if (ColG < 0) ColG = 0;
@@ -97,27 +93,27 @@ namespace ImageInterpolation
                     if (ColR > 255) ColR = 255;
                     if (ColG > 255) ColG = 255;
                     if (ColB > 255) ColB = 255;
-
+                    Console.WriteLine($"{i},{j}");
                     Output.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(ColR), Convert.ToInt32(ColG), Convert.ToInt32(ColB)));
                 }
             }
         }
 
-        public static float Calc(Bitmap Extended, float x, float y, string color)
+        public static double Calc(Bitmap Extended, double x, double y, string color)
         {
-            float x0 = x;
-            float y0 = y;
+            double x0 = x;
+            double y0 = y;
 
             int u0 = Convert.ToInt32(Math.Floor(x0));
             int v0 = Convert.ToInt32(Math.Floor(y0));
 
-            float q = 0;
+            double q = 0;
 
             for (int j = 0; j < 2 * Window; j++)
             {
                 int v = v0 + j - Window + 1;
 
-                float p = 0;
+                double p = 0;
                 for (int i = 0; i < 2 * Window; i++)
                 {
                     int u = u0 + i - Window + 1;
@@ -140,7 +136,7 @@ namespace ImageInterpolation
             return q;
         }
 
-        static float Core(float t)
+        static double Core(double t)
         {
             if (t < 0.0f) t = -t;
             if (t == 0.0f) return 1;
@@ -148,7 +144,7 @@ namespace ImageInterpolation
             else return 0;
         }
 
-        static float SinC(float Arg)
+        static double SinC(double Arg)
         {
             return Convert.ToSingle(Math.Sin(Convert.ToDouble(Arg * Math.PI)) / Convert.ToDouble(Arg * Math.PI));
         }
