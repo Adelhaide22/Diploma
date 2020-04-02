@@ -141,13 +141,13 @@ namespace Lanczos
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
-        private void btn_Wiener_Click(object sender, EventArgs e)
+        private  void  btn_Wiener_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var filteredImage = WienerFilter.Filter(initialImage);
+            var filteredImage =  WienerFilter.Filter(initialImage);
 
             pictureBox2.Image = filteredImage;
             pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
