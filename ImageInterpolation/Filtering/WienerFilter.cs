@@ -56,57 +56,134 @@ namespace ImageInterpolation.Filtering
         static double dispersionR, dispersionB, dispersionG, medianR, medianB, medianG;
         public static Bitmap Filter(Bitmap initialImage)
         {
-            var filteredImage = new Bitmap(initialImage);
-
-            medianR = GetMedian(initialImage, "red");
-            medianG = GetMedian(initialImage, "green");
-            medianB = GetMedian(initialImage, "blue");
-
-            dispersionR = GetDispersion(initialImage, medianR, "red");
-            dispersionG = GetDispersion(initialImage, medianG, "green");
-            dispersionB = GetDispersion(initialImage, medianB, "blue");
+            var g = new double[3][,];
+            g[0] = new double[initialImage.Width, initialImage.Height];
+            g[1] = new double[initialImage.Width, initialImage.Height];
+            g[2] = new double[initialImage.Width, initialImage.Height];
 
             for (int i = 0; i < initialImage.Width; i++)
             {
                 for (int j = 0; j < initialImage.Height; j++)
                 {
-                    var coreR = GetGaussianCore(initialImage, i, j, "red");
-                    var coreG = GetGaussianCore(initialImage, i, j, "green");
-                    var coreB = GetGaussianCore(initialImage, i, j, "blue");
+                    g[0][i, j] = initialImage.GetPixel(i, j).R;
+                    g[1][i, j] = initialImage.GetPixel(i, j).G;
+                    g[2][i, j] = initialImage.GetPixel(i, j).B;
+                }
+            }
+
+            var h = GetGaussianCore(g);
+
+
+
+
+
+
+
+            var transformedImage = FourierTransform.TransformImage(initialImage);
+            var resultImage = new Bitmap(initialImage.Width, initialImage.Height);
+
+            medianR = GetMedian(transformedImage, "red");
+            medianG = GetMedian(transformedImage, "green");
+            medianB = GetMedian(transformedImage, "blue");
+
+            dispersionR = GetDispersion(transformedImage, medianR, "red");
+            dispersionG = GetDispersion(transformedImage, medianG, "green");
+            dispersionB = GetDispersion(transformedImage, medianB, "blue");
+
+            for (int i = 0; i < transformedImage.Width; i++)
+            {
+                for (int j = 0; j < transformedImage.Height; j++)
+                {
+                    var coreR = GetGaussianCore(transformedImage, i, j, "red");
+                    var coreG = GetGaussianCore(transformedImage, i, j, "green");
+                    var coreB = GetGaussianCore(transformedImage, i, j, "blue");
 
                     //var coreR = LanczosInterpolator.Calc(initialImage, i, j, "red");
                     //var coreG = LanczosInterpolator.Calc(initialImage, i, j, "green");
                     //var coreB = LanczosInterpolator.Calc(initialImage, i, j, "blue");
 
-                    double ColR = GetWiener(coreR, initialImage, i, j, "red");
-                    double ColG = GetWiener(coreG, initialImage, i, j, "green");
-                    double ColB = GetWiener(coreB, initialImage, i, j, "blue");
+                    double ColR = GetWiener(coreR, transformedImage, i, j, "red");
+                    double ColG = GetWiener(coreG, transformedImage, i, j, "green");
+                    double ColB = GetWiener(coreB, transformedImage, i, j, "blue");
 
-                    filteredImage.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(ColR), Convert.ToInt32(ColG), Convert.ToInt32(ColB)));
+
+
+                    resultImage.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(ColR), Convert.ToInt32(ColG), Convert.ToInt32(ColB)));
                     Console.WriteLine($"{i},{j}");
                 }
             }
 
-            return filteredImage;
+            return resultImage;
         }
+
+        private static double[][,] GetGaussianCore(double[][,] g)
+        {
+            return g.AsParallel().Select(l =>
+            {
+                var dispersion = GetDispersion(l);
+                var core = new double[l.GetLength(0), l.GetLength(1)];
+
+                for (int i = 0; i < l.GetLength(0); i++)
+                {
+                    for (int j = 0; j < l.GetLength(1); j++)
+                    {
+                        core[i, j] = 1 / Math.Sqrt(2 * Math.PI * dispersion) * Math.Exp((i * i + j * j) / (2 * dispersion));
+                    }
+                }
+                return core;
+            }).ToArray();
+        }
+
+        private static double GetDispersion(double[,] layer)
+        {
+            var sum = 0.0;
+            var average = GetAverage(layer);
+
+            for (int i = 0; i < layer.GetLength(0); i++)
+            {
+                for (int j = 0; j < layer.GetLength(1); j++)
+                {
+                    sum += Math.Pow((layer[i, j] - average), 2);
+                }
+            }
+
+            return sum / layer.Length;
+        }
+
+        private static double GetAverage(double[,] layer)
+        {
+            var sum = 0.0;
+            for (int i = 0; i < layer.GetLength(0); i++)
+            {
+                for (int j = 0; j < layer.GetLength(1); j++)
+                {
+                    sum += layer[i, j];
+                }
+            }
+            return sum / layer.Length;
+        }
+
+
+
+
 
         private static double GetGaussianCore(Bitmap initialImage, int i, int j, string color)
         {
-            //if (color == "red")
-            //{
-            //    return (1 / Math.Sqrt(2 * Math.PI * dispersionR)) * Math.Exp((i * i + j * j) / (2 * dispersionR));
-            //}
-            //if (color == "blue")
-            //{
-            //    return (1 / Math.Sqrt(2 * Math.PI * dispersionB)) * Math.Exp((i * i + j * j) / (2 * dispersionB));
-            //}
-            //if (color == "green")
-            //{
-            //    return (1 / Math.Sqrt(2 * Math.PI * dispersionG)) * Math.Exp((i * i + j * j) / (2 * dispersionG));
-            //}
-            //return 0;
+            if (color == "red")
+            {
+                return (1 / Math.Sqrt(2 * Math.PI * dispersionR)) * Math.Exp((i * i + j * j) / (2 * dispersionR));
+            }
+            if (color == "blue")
+            {
+                return (1 / Math.Sqrt(2 * Math.PI * dispersionB)) * Math.Exp((i * i + j * j) / (2 * dispersionB));
+            }
+            if (color == "green")
+            {
+                return (1 / Math.Sqrt(2 * Math.PI * dispersionG)) * Math.Exp((i * i + j * j) / (2 * dispersionG));
+            }
+            return 0;
 
-            return (1 / Math.Sqrt(2 * Math.PI * 400)) * Math.Exp((i * i + j * j) / (2 * 400));
+            //return (1 / Math.Sqrt(2 * Math.PI * 400)) * Math.Exp((i * i + j * j) / (2 * 400));
         }
 
         private static double GetWiener(double core, Bitmap initialImage, int i, int j, string color)
