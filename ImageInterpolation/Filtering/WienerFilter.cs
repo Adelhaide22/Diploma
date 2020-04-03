@@ -116,7 +116,63 @@ namespace ImageInterpolation.Filtering
         private static double GetSNR(double average, double dispersion)
         {
             return average / Math.Sqrt(dispersion);
-        }      
+        }
+
+        internal static Bitmap Blur(Bitmap initialImage)
+        {
+            var f = new double[3][,];
+            f[0] = new double[initialImage.Width, initialImage.Height];
+            f[1] = new double[initialImage.Width, initialImage.Height];
+            f[2] = new double[initialImage.Width, initialImage.Height];
+
+            for (int i = 0; i < initialImage.Width; i++)
+            {
+                for (int j = 0; j < initialImage.Height; j++)
+                {
+                    f[0][i, j] = initialImage.GetPixel(i, j).R;
+                    f[1][i, j] = initialImage.GetPixel(i, j).G;
+                    f[2][i, j] = initialImage.GetPixel(i, j).B;
+                }
+            }
+
+            var g = f.AsParallel().Select(fi =>
+            {
+                var h = GetGaussianCore(fi, 400);
+
+                var F = FourierTransform.TransformForward(fi);
+                var H = FourierTransform.TransformForward(h);
+
+                var res = FourierTransform.TransformBackward(Multiplicate(F, H));
+                return res;
+            }).ToArray();
+
+            var resultImage = new Bitmap(initialImage.Width, initialImage.Height);
+
+            for (int i = 0; i < initialImage.Width; i++)
+            {
+                for (int j = 0; j < initialImage.Height; j++)
+                {
+                    resultImage.SetPixel(i, j, Color.FromArgb((int)g[0][i, j], (int)g[1][i, j], (int)g[2][i, j]));
+                }
+            }
+
+            return resultImage;
+        }
+
+        private static Complex<double>[,] Multiplicate(Complex<double>[,] f, Complex<double>[,] h)
+        {
+            var result = new Complex<double>[f.GetLength(0), f.GetLength(1)];
+
+            for (int i = 0; i < f.GetLength(0); i++)
+            {
+                for (int j = 0; j < f.GetLength(1); j++)
+                {
+                    result[i, j] = f[i, j] * h[i, j];
+                }
+            }
+
+            return result;
+        }
     }
 }
  

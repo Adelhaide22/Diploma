@@ -147,10 +147,14 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var filteredImage =  WienerFilter.Filter(initialImage);
+            var brokenImage = WienerFilter.Blur(initialImage);
 
-            pictureBox2.Image = filteredImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox2.Image = brokenImage;
+
+            //var filteredImage =  WienerFilter.Filter(brokenImage);
+
+            //pictureBox2.Image = filteredImage;
+            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
             sw.Stop();
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
