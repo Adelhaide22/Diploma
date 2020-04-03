@@ -136,7 +136,7 @@ namespace ImageInterpolation
             return q;
         }
 
-        static double Core(double t)
+        public static double Core(double t)
         {
             if (t < 0.0f) t = -t;
             if (t == 0.0f) return 1;

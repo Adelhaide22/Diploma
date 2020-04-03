@@ -38,6 +38,8 @@
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.btn_Wiener = new System.Windows.Forms.Button();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.btn_Gaussian = new System.Windows.Forms.Button();
+            this.btn_Sharpen = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -105,11 +107,11 @@
             // 
             // btn_Wiener
             // 
-            this.btn_Wiener.Location = new System.Drawing.Point(1036, 35);
+            this.btn_Wiener.Location = new System.Drawing.Point(1030, 35);
             this.btn_Wiener.Name = "btn_Wiener";
             this.btn_Wiener.Size = new System.Drawing.Size(75, 23);
             this.btn_Wiener.TabIndex = 8;
-            this.btn_Wiener.Text = "WienerFilter";
+            this.btn_Wiener.Text = "Wiener Filter";
             this.btn_Wiener.UseVisualStyleBackColor = true;
             this.btn_Wiener.Click += new System.EventHandler(this.btn_Wiener_Click);
             // 
@@ -121,11 +123,33 @@
             this.pictureBox3.TabIndex = 9;
             this.pictureBox3.TabStop = false;
             // 
+            // btn_Gaussian
+            // 
+            this.btn_Gaussian.Location = new System.Drawing.Point(694, 75);
+            this.btn_Gaussian.Name = "btn_Gaussian";
+            this.btn_Gaussian.Size = new System.Drawing.Size(121, 23);
+            this.btn_Gaussian.TabIndex = 10;
+            this.btn_Gaussian.Text = "Gaussian Filter";
+            this.btn_Gaussian.UseVisualStyleBackColor = true;
+            this.btn_Gaussian.Click += new System.EventHandler(this.btn_Gaussian_Click);
+            // 
+            // btn_Sharpen
+            // 
+            this.btn_Sharpen.Location = new System.Drawing.Point(860, 75);
+            this.btn_Sharpen.Name = "btn_Sharpen";
+            this.btn_Sharpen.Size = new System.Drawing.Size(122, 23);
+            this.btn_Sharpen.TabIndex = 11;
+            this.btn_Sharpen.Text = "Sharpen Filter";
+            this.btn_Sharpen.UseVisualStyleBackColor = true;
+            this.btn_Sharpen.Click += new System.EventHandler(this.btn_Sharpen_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1432, 761);
+            this.Controls.Add(this.btn_Sharpen);
+            this.Controls.Add(this.btn_Gaussian);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.btn_Wiener);
             this.Controls.Add(this.btn_loadScaled);
@@ -155,6 +179,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.Windows.Forms.Button btn_Wiener;
         private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.Button btn_Gaussian;
+        private System.Windows.Forms.Button btn_Sharpen;
     }
 }
 

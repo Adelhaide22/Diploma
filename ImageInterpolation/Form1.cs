@@ -26,8 +26,9 @@ namespace Lanczos
 
             btn_edge.Click += btn_Edge_Click;
             btn_lanzcos.Click += btn_Lanczos_Click;
-            //btn_SART.Click += btn_SART_Click;
             btn_Wiener.Click += btn_Wiener_Click;
+            btn_Gaussian.Click += btn_Gaussian_Click;
+            btn_Sharpen.Click += btn_Sharpen_Click;
 
             openFileDialog1.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
             openFileDialog2.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
@@ -141,23 +142,15 @@ namespace Lanczos
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
-        private  void  btn_Wiener_Click(object sender, EventArgs e)
+        private void btn_Wiener_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
             sw.Start();
 
-            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = WienerFilter.Blur(initialImage);
+            var initialImage = (Bitmap)pictureBox2.Image;
+            var reconstructedImage = WienerFilter.Filter(initialImage);
 
-            pictureBox2.Image = brokenImage;
-            var sharpedImage = WienerFilter.Sharpen(brokenImage);
-
-            pictureBox3.Image = sharpedImage;
-
-            //var filteredImage =  WienerFilter.Filter(brokenImage);
-
-            //pictureBox2.Image = filteredImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox3.Image = reconstructedImage;
             pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
             sw.Stop();
 
@@ -177,6 +170,36 @@ namespace Lanczos
             }
 
             return scaledImage;
-        }        
+        }
+
+        private void btn_Gaussian_Click(object sender, EventArgs e)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+            var brokenImage = GaussianFilter.Blur(initialImage);
+
+            pictureBox2.Image = brokenImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            sw.Stop();
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        }
+
+        private void btn_Sharpen_Click(object sender, EventArgs e)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+            var brokenImage = SharpenFilter.Sharpen(initialImage);
+
+            pictureBox2.Image = brokenImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            sw.Stop();
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        }
     }
 }
