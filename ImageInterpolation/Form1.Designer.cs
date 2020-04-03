@@ -37,8 +37,10 @@
             this.btn_loadScaled = new System.Windows.Forms.Button();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.btn_Wiener = new System.Windows.Forms.Button();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // btn_loadOrigin
@@ -78,7 +80,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(694, 119);
+            this.pictureBox2.Location = new System.Drawing.Point(464, 119);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(400, 400);
             this.pictureBox2.TabIndex = 5;
@@ -111,11 +113,20 @@
             this.btn_Wiener.UseVisualStyleBackColor = true;
             this.btn_Wiener.Click += new System.EventHandler(this.btn_Wiener_Click);
             // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Location = new System.Drawing.Point(881, 119);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(400, 400);
+            this.pictureBox3.TabIndex = 9;
+            this.pictureBox3.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1432, 761);
+            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.btn_Wiener);
             this.Controls.Add(this.btn_loadScaled);
             this.Controls.Add(this.pictureBox2);
@@ -127,6 +138,7 @@
             this.Text = "Image resampling";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -142,6 +154,7 @@
         private System.Windows.Forms.Button btn_loadScaled;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
         private System.Windows.Forms.Button btn_Wiener;
+        private System.Windows.Forms.PictureBox pictureBox3;
     }
 }
 

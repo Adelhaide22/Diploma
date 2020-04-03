@@ -150,11 +150,15 @@ namespace Lanczos
             var brokenImage = WienerFilter.Blur(initialImage);
 
             pictureBox2.Image = brokenImage;
+            var sharpedImage = WienerFilter.Sharpen(brokenImage);
+
+            pictureBox3.Image = sharpedImage;
 
             //var filteredImage =  WienerFilter.Filter(brokenImage);
 
             //pictureBox2.Image = filteredImage;
-            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
             sw.Stop();
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
