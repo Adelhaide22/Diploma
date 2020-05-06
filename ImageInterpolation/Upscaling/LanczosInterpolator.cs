@@ -93,7 +93,6 @@ namespace ImageInterpolation
                     if (ColR > 255) ColR = 255;
                     if (ColG > 255) ColG = 255;
                     if (ColB > 255) ColB = 255;
-                    Console.WriteLine($"{i},{j}");
                     Output.SetPixel(i, j, Color.FromArgb(Convert.ToInt32(ColR), Convert.ToInt32(ColG), Convert.ToInt32(ColB)));
                 }
             }

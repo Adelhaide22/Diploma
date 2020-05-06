@@ -23,13 +23,7 @@ namespace Lanczos
 
             btn_loadOrigin.Click += btn_openFile_Click;
             btn_loadScaled.Click += button_loadScaled_Click;
-
-            btn_edge.Click += btn_Edge_Click;
-            btn_lanzcos.Click += btn_Lanczos_Click;
-            btn_Wiener.Click += btn_Wiener_Click;
-            btn_Gaussian.Click += btn_Gaussian_Click;
-            btn_Sharpen.Click += btn_Sharpen_Click;
-
+            
             openFileDialog1.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
             openFileDialog2.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
         }
@@ -120,7 +114,7 @@ namespace Lanczos
             var resampledImage = LanczosInterpolator.Resample(initialImage);
 
             pictureBox2.Image = resampledImage;      
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
             //var n = origin.Width;
