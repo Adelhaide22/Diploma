@@ -38,13 +38,13 @@ namespace ImageInterpolation.Filtering
 
 			for (int k = 0; k < F.Length; k++)
 			{
-				Complex temp = 0;
+				double temp = 0;
 				for (int n = 0; n < F.Length; n++)
 				{
-					temp += (F[n / height, n % height] * (Math.Cos(2 * Math.PI * n * k / F.Length)
+					temp += (/*F[n / height, n % height] * */ (Math.Cos(2 * Math.PI * n * k / F.Length)
 						+ /*Complex<double>.I **/ Math.Sin(2 * Math.PI * n * k / F.Length)))/F.Length;
 				}
-				f[k / height, k % height] = temp.Real;
+				f[k / height, k % height] = temp;
 			}
 
 			//var result = new ComplexImage();

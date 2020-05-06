@@ -1,8 +1,11 @@
 ﻿using Accord.Imaging;
+using Accord.Imaging.Filters;
 using Extreme.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -14,22 +17,20 @@ namespace ImageInterpolation.Filtering
     {
         public static Bitmap Filter(Bitmap i)
         {
-            var ini = new Bitmap(i.Width, i.Height, System.Drawing.Imaging.PixelFormat.Format16bppGrayScale);
-            var initialImage = ini.Convert16bppTo8bpp();
+            var initialImage = i.ConvertTo8bpp();
             initialImage.ConvertColor8bppToGrayscale8bpp();
 
-            return initialImage;
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = ComplexImage.FromBitmap(initialImage);
             var f = ComplexImage.FromBitmap(initialImage);
+            var H = GetComplexImageFromMatrix(GetGaussianCore(g));
+
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
-            var H = GetGaussianCore(h, g, 16);
-
+            
             g.ForwardFourierTransform();
             H.ForwardFourierTransform();
-
-            var F = GetF(f, h, g, average, dispersion);
+            
+            var F = GetF(f, H, g, average, dispersion);
             F.BackwardFourierTransform();
 
             return F.ToBitmap();
@@ -76,6 +77,26 @@ namespace ImageInterpolation.Filtering
             //return resultImage;
         }
 
+        private static ComplexImage GetComplexImageFromMatrix(double[,] core)
+        {
+            var bitmap = new Bitmap(core.GetLength(0), core.GetLength(1));
+
+            var bitmap8bpp = bitmap.ConvertTo8bpp();
+            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
+
+            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
+
+            for (int i = 0; i < complexImage.Width; i++)
+            {
+                for (int j = 0; j < complexImage.Height; j++)
+                {
+                    complexImage.Data[i, j] = core[i, j];
+                }
+            }
+
+            return complexImage;
+        }
+
         private static ComplexImage GetF(ComplexImage F, ComplexImage H, ComplexImage G, Complex average, Complex dispersion)
         {
             var snr = GetSNR(average, dispersion);
@@ -91,32 +112,62 @@ namespace ImageInterpolation.Filtering
             }
             return F;
         }
+
         private static Complex GetSNR(Complex average, Complex dispersion)
         {
             return average / Complex.Sqrt(dispersion);
         }
 
-        private static ComplexImage GetGaussianCore(ComplexImage h, ComplexImage g, int dispersion)
+        private static double[,] GetGaussianCore(ComplexImage g)
         {
-            var core = new double[g.Width, g.Height];
+            var result = new double[g.Width, g.Height];
+            var blurSize = 5;
+            var sigma = 5;
 
-            for (int i = 0; i < g.Width; i++)
+            var sum = 0.0;
+            var blurMatrix = new double[blurSize, blurSize];
+            for (int l = 0; l < blurSize; l++)
             {
-                for (int j = 0; j < g.Height; j++)
+                for (int k = 0; k < blurSize; k++)
                 {
-                    core[i, j] = 1 / Math.Sqrt(2 * Math.PI * dispersion) * Math.Exp((i * i + j * j) / (2 * dispersion));
+                    blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-(l * l + k * k) / (2 * sigma * sigma));
+                    sum += blurMatrix[l, k];
                 }
             }
 
-            for (int i = 0; i < h.Width; i++)
+            for (int l = 0; l < blurSize; l++)
             {
-                for (int j = 0; j < h.Height; j++)
+                for (int k = 0; k < blurSize; k++)
                 {
-                    h.Data[i, j] = core[i, j];
+                    blurMatrix[l, k] /= sum;
                 }
             }
 
-            return h;
+            for (int l = 0; l < g.Width/2 - blurSize/2 - 1; l++)
+            {
+                for (int k = 0; k < g.Height/2 - blurSize/2 - 1; k++)
+                {
+                    result[l, k] = 0;
+                }
+            }
+
+            for (int l = g.Width / 2 + blurSize / 2; l < g.Width; l++)
+            {
+                for (int k = g.Height / 2 + blurSize / 2; k < g.Height; k++)
+                {
+                    result[l, k] = 0;
+                }
+            }
+
+            for (int l = g.Width / 2 - blurSize / 2 - 1; l < g.Width / 2 + blurSize / 2; l++)
+            {
+                for (int k = g.Height / 2 - blurSize / 2 - 1; k < g.Height / 2 + blurSize / 2; k++)
+                {
+                    result[l, k] = blurMatrix[l - (g.Width / 2 - blurSize / 2 - 1), k - (g.Height / 2 - blurSize / 2 - 1)];
+                }
+            }
+
+            return result;
         }
 
         private static Complex GetDispersion(Complex[,] layer, Complex average)
@@ -145,6 +196,20 @@ namespace ImageInterpolation.Filtering
             }
             return sum / layer.Length;
         }
+
+        private static Bitmap ConvertTo8bpp(this Bitmap oldbmp)
+        {
+            using (var ms = new MemoryStream())
+            {
+                oldbmp.Save(ms, ImageFormat.Gif);
+                ms.Position = 0;
+                return (Bitmap)System.Drawing.Image.FromStream(ms);
+            }
+        }
+
+
+
+
 
         private static Complex[,] GetF(Complex[,] H, Complex[,] G, double average, double dispersion)
         {

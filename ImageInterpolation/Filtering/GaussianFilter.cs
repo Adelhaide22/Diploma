@@ -9,20 +9,25 @@ namespace ImageInterpolation.Filtering
 {
     public static class GaussianFilter
     {
+        private static int blurSize = 5;
+
         public static Bitmap Blur(Bitmap initialImage)
         {
-            var f = new double[3][,];
-            f[0] = new double[initialImage.Width, initialImage.Height];
-            f[1] = new double[initialImage.Width, initialImage.Height];
-            f[2] = new double[initialImage.Width, initialImage.Height];
+            var extended = new Bitmap(initialImage.Width + blurSize, initialImage.Height + blurSize);
+            LanczosInterpolator.FillExtended(initialImage, extended);
 
-            for (int i = 0; i < initialImage.Width; i++)
+            var f = new double[3][,];
+            f[0] = new double[extended.Width, extended.Height];
+            f[1] = new double[extended.Width, extended.Height];
+            f[2] = new double[extended.Width, extended.Height];
+
+            for (int i = 0; i < extended.Width; i++)
             {
-                for (int j = 0; j < initialImage.Height; j++)
+                for (int j = 0; j < extended.Height; j++)
                 {
-                    f[0][i, j] = initialImage.GetPixel(i, j).R;
-                    f[1][i, j] = initialImage.GetPixel(i, j).G;
-                    f[2][i, j] = initialImage.GetPixel(i, j).B;
+                    f[0][i, j] = extended.GetPixel(i, j).R;
+                    f[1][i, j] = extended.GetPixel(i, j).G;
+                    f[2][i, j] = extended.GetPixel(i, j).B;
                 }
             }
 
@@ -33,9 +38,9 @@ namespace ImageInterpolation.Filtering
                 return GaussianBlur(fi);
             }).ToArray();
 
-            for (int i = 0; i < initialImage.Width; i++)
+            for (int i = blurSize / 2; i < extended.Width - blurSize; i++)
             {
-                for (int j = 0; j < initialImage.Height; j++)
+                for (int j = blurSize / 2; j < extended.Height - blurSize; j++)
                 {
                     resultImage.SetPixel(i, j, Color.FromArgb((int)g[0][i, j], (int)g[1][i, j], (int)g[2][i, j]));
                 }
@@ -44,11 +49,10 @@ namespace ImageInterpolation.Filtering
             return resultImage;
         }
 
-        private static double[,] GaussianBlur(double[,] f)
+        public static double[,] GaussianBlur(double[,] f)
         {
             var result = new double[f.GetLength(0), f.GetLength(1)];
-            var blurSize = 3;
-            var sigma = 4;
+            var sigma = 5;
 
             var sum = 0.0;
             var blurMatrix = new double[blurSize, blurSize];

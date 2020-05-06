@@ -151,21 +151,6 @@ namespace Lanczos
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
-        private Bitmap GetScaledImage(Bitmap initialImage)
-        {
-            var scaledImage = new Bitmap(initialImage.Width * 2, initialImage.Height * 2);
-
-            for (int i = 0; i < scaledImage.Height - 2; i+=2)
-            {
-                for (int j = 0; j < scaledImage.Width - 2; j+=2)
-                {
-                    scaledImage.SetPixel(i, j, initialImage.GetPixel(i / 2, j / 2));
-                }
-            }
-
-            return scaledImage;
-        }
-
         private void btn_Gaussian_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
@@ -195,5 +180,21 @@ namespace Lanczos
             sw.Stop();
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
+
+        private Bitmap GetScaledImage(Bitmap initialImage)
+        {
+            var scaledImage = new Bitmap(initialImage.Width * 2, initialImage.Height * 2);
+
+            for (int i = 0; i < scaledImage.Height - 2; i += 2)
+            {
+                for (int j = 0; j < scaledImage.Width - 2; j += 2)
+                {
+                    scaledImage.SetPixel(i, j, initialImage.GetPixel(i / 2, j / 2));
+                }
+            }
+
+            return scaledImage;
+        }
+
     }
 }
