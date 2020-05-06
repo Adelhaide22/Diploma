@@ -15,25 +15,43 @@ namespace ImageInterpolation.Filtering
 {
     public static class WienerFilter
     {
-        public static Bitmap Filter(Bitmap i)
+        public static Bitmap ToGray(Bitmap image)
         {
-            var initialImage = i.ConvertTo8bpp();
+            var initialImage = image.ConvertTo8bpp();
             initialImage.ConvertColor8bppToGrayscale8bpp();
+            return initialImage;
+        }
+
+        public static Bitmap Filter(Bitmap image)
+        {
+            var initialImage = ToGray(image);
 
             var g = ComplexImage.FromBitmap(initialImage);
             var f = ComplexImage.FromBitmap(initialImage);
+
+            for (int i = 0; i < g.Width; i++)
+            {
+                for (int j = 0; j < g.Height; j++)
+                {
+                    g.Data[i, j] = initialImage.GetPixel(i, j).R;
+                    f.Data[i, j] = initialImage.GetPixel(i, j).R;
+                }
+            }
+
             var H = GetComplexImageFromMatrix(GetGaussianCore(g));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
             
             g.ForwardFourierTransform();
+            g.BackwardFourierTransform();
             H.ForwardFourierTransform();
             
             var F = GetF(f, H, g, average, dispersion);
             F.BackwardFourierTransform();
 
-            return F.ToBitmap();
+            var result = F.ToBitmap();
+            return result;
 
             //var g = new double[3][,];
             //g[0] = new double[initialImage.Width, initialImage.Height];

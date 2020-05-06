@@ -88,22 +88,6 @@ namespace Lanczos
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
-        private void btn_SART_Click(object sender, EventArgs e)
-        {
-            //var sw = new Stopwatch();
-            //sw.Start();
-
-            //var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            //var scaledImage = GetScaledImage(initialImage);
-
-            //var resampledImage = SARTInterpolator.resample(scaledImage);
-
-            //pictureBox2.Image = resampledImage;
-            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
-
-            //sw.Stop();
-        }
-
         void btn_Lanczos_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
@@ -142,6 +126,8 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)pictureBox2.Image;
+            var greyImage = WienerFilter.ToGray(initialImage);
+            pictureBox2.Image = greyImage;
             var reconstructedImage = WienerFilter.Filter(initialImage);
 
             pictureBox3.Image = reconstructedImage;

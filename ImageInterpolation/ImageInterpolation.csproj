@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filtering\ComplexImageHelper.cs" />
     <Compile Include="Filtering\FourieTransform.cs" />
     <Compile Include="Filtering\GaussianFilter.cs" />
     <Compile Include="Filtering\SharpenFilter.cs" />
