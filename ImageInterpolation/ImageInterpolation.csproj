@@ -52,18 +52,6 @@
     <Reference Include="Accord.Statistics, Version=3.8.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Statistics.3.8.2-alpha\lib\net462\Accord.Statistics.dll</HintPath>
     </Reference>
-    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.Imaging.2.2.5\lib\AForge.Imaging.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
-    </Reference>
-    <Reference Include="Extreme.Numerics, Version=7.0.12.0, Culture=neutral, PublicKeyToken=9e513770f58567b2, processorArchitecture=MSIL">
-      <HintPath>..\packages\Extreme.Numerics.7.0.12\lib\net46\Extreme.Numerics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -79,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Filtering\ComplexImageHelper.cs" />
-    <Compile Include="Filtering\FourieTransform.cs" />
+    <Compile Include="Filtering\Fourie.cs" />
     <Compile Include="Filtering\GaussianFilter.cs" />
     <Compile Include="Filtering\SharpenFilter.cs" />
     <Compile Include="Filtering\WienerFilter.cs" />

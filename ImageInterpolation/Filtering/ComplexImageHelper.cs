@@ -8,143 +8,152 @@ using System.Threading.Tasks;
 
 namespace ImageInterpolation.Filtering
 {
-    class ComplexImageHelper
+    static class ComplexImageHelper
     {
-        public enum Direction
+        private static Complex w(int k, int N)
         {
-            /// <summary>
-            ///   Forward direction of Fourier transformation.
-            /// </summary>
-            /// 
-            Forward = 1,
-
-            /// <summary>
-            ///   Backward direction of Fourier transformation.
-            /// </summary>
-            /// 
-            Backward = -1
-        };
-        
-        public ComplexImage ForwardFourierTransform(ComplexImage image)
-        {
-            if (!image.FourierTransformed)
-            {
-                for (int y = 0; y < image.Height; y++)
-                {
-                    for (int x = 0; x < image.Width; x++)
-                    {
-                        if (((x + y) & 0x1) != 0)
-                            image.Data[y, x] *= -1;
-                    }
-                }
-
-                DFT2(image.Data, Direction.Forward);
-            }
-
-            return image;
+            if (k % N == 0) return 1;
+            double arg = -2 * Math.PI * k / N;
+            return new Complex(Math.Cos(arg), Math.Sin(arg));
         }
-
         /// <summary>
-        /// Applies backward fast Fourier transformation to the complex image.
+        /// Возвращает спектр сигнала
         /// </summary>
-        /// 
-        public ComplexImage BackwardFourierTransform(ComplexImage image)
+        /// <param name="x">Массив значений сигнала. Количество значений должно быть степенью 2</param>
+        /// <returns>Массив со значениями спектра сигнала</returns>
+        public static Complex[] fft(Complex[] x)
         {
-            if (image.FourierTransformed)
+            Complex[] X;
+            int N = x.Length;
+            if (N == 2)
             {
-                DFT2(image.Data, Direction.Backward);
-
-                for (int y = 0; y < image.Height; y++)
+                X = new Complex[2];
+                X[0] = x[0] + x[1];
+                X[1] = x[0] - x[1];
+            }
+            else
+            {
+                Complex[] x_even = new Complex[N / 2];
+                Complex[] x_odd = new Complex[N / 2];
+                for (int i = 0; i < N / 2; i++)
                 {
-                    for (int x = 0; x < image.Width; x++)
-                    {
-                        if (((x + y) & 0x1) != 0)
-                            image.Data[y, x] *= -1;
-                    }
+                    x_even[i] = x[2 * i];
+                    x_odd[i] = x[2 * i + 1];
+                }
+                Complex[] X_even = fft(x_even);
+                Complex[] X_odd = fft(x_odd);
+                X = new Complex[N];
+                for (int i = 0; i < N / 2; i++)
+                {
+                    X[i] = X_even[i] + w(i, N) * X_odd[i];
+                    X[i + N / 2] = X_even[i] - w(i, N) * X_odd[i];
                 }
             }
-
-            return image;
+            return X;
+        }
+        /// <summary>
+        /// Центровка массива значений полученных в fft (спектральная составляющая при нулевой частоте будет в центре массива)
+        /// </summary>
+        /// <param name="X">Массив значений полученный в fft</param>
+        /// <returns></returns>
+        public static Complex[] nfft(Complex[] X)
+        {
+            int N = X.Length;
+            Complex[] X_n = new Complex[N];
+            for (int i = 0; i < N / 2; i++)
+            {
+                X_n[i] = X[N / 2 + i];
+                X_n[N / 2 + i] = X[i];
+            }
+            return X_n;
         }
 
-        public static void DFT2(Complex[,] data, Direction direction)
+        public static Complex[,] fft2(Complex[] X)
         {
-            int n = data.GetLength(0);	// rows
-            int m = data.GetLength(1);	// columns
-            double arg, cos, sin;
-            var dst = new Complex[System.Math.Max(n, m)];
-
-            // process rows
-            for (int i = 0; i < n; i++)
+            var trans = fft(X);
+            //toWolframAlphaDefinition(ref trans);
+            var res = new Complex[(int)Math.Sqrt(trans.Length), (int)Math.Sqrt(trans.Length)];
+            for (int i = 0; i < res.GetLength(0); i++)
             {
-                for (int j = 0; j < dst.Length; j++)
+                for (int j = 0; j < res.GetLength(1); j++)
                 {
-                    dst[j] = Complex.Zero;
-
-                    arg = -(int)direction * 2.0 * System.Math.PI * (double)j / (double)m;
-
-                    // sum source elements
-                    for (int k = 0; k < m; k++)
-                    {
-                        cos = System.Math.Cos(k * arg);
-                        sin = System.Math.Sin(k * arg);
-
-                        double re = data[i, k].Real * cos - data[i, k].Imaginary * sin;
-                        double im = data[i, k].Real * sin + data[i, k].Imaginary * cos;
-
-                        dst[j] += new Complex(re, im);
-                    }
-                }
-
-                // copy elements
-                if (direction == Direction.Forward)
-                {
-                    // devide also for forward transform
-                    for (int j = 0; j < dst.Length; j++)
-                        data[i, j] = dst[j] / m;
-                }
-                else
-                {
-                    for (int j = 0; j < dst.Length; j++)
-                        data[i, j] = dst[j];
+                    res[i, j] = trans[i * res.GetLength(1) + j];
                 }
             }
+            return res;
+        }
 
-            // process columns
-            for (int j = 0; j < m; j++)
+        public static Complex[] bft(Complex[] f)
+        {
+            Complex[] F = new Complex[f.Length];
+            for (int i = 0; i < f.Length; i++)
             {
-                for (int i = 0; i < n; i++)
+                F[i] = Complex.Conjugate(f[i]);
+            }
+            ft(F.Length, ref F);
+            float scaling = (float)(1.0 / F.Length);
+            for (int i = 0; i < F.Length; i++)
+            {
+                F[i] = scaling * Complex.Conjugate(F[i]);
+            }
+
+            return F;
+        }
+
+        public static Complex[,] bft2(Complex[] X)
+        {
+            var trans = bft(X);
+            //toWolframAlphaDefinition(ref trans);
+            var res = new Complex[(int)Math.Sqrt(trans.Length), (int)Math.Sqrt(trans.Length)];
+            for (int i = 0; i < res.GetLength(0); i++)
+            {
+                for (int j = 0; j < res.GetLength(1); j++)
                 {
-                    dst[i] = Complex.Zero;
+                    res[i, j] = trans[i * res.GetLength(1) + j];
+                }
+            }
+            return res;
+        }
 
-                    arg = -(int)direction * 2.0 * System.Math.PI * (double)i / (double)n;
+        static void ft(float n, ref Complex[] f)
+        {
+            if (n > 1)
+            {
+                Complex[] g = new Complex[(int)n / 2];
+                Complex[] u = new Complex[(int)n / 2];
 
-                    // sum source elements
-                    for (int k = 0; k < n; k++)
-                    {
-                        cos = System.Math.Cos(k * arg);
-                        sin = System.Math.Sin(k * arg);
-
-                        double re = data[k, j].Real * cos - data[k, j].Imaginary * sin;
-                        double im = data[k, j].Real * sin + data[k, j].Imaginary * cos;
-
-                        dst[i] += new Complex(re, im);
-                    }
+                for (int i = 0; i < n / 2; i++)
+                {
+                    g[i] = f[i * 2];
+                    u[i] = f[i * 2 + 1];
                 }
 
-                // copy elements
-                if (direction == Direction.Forward)
+                ft(n / 2, ref g);
+                ft(n / 2, ref u);
+
+                for (int i = 0; i < n / 2; i++)
                 {
-                    // devide also for forward transform
-                    for (int i = 0; i < dst.Length; i++)
-                        data[i, j] = dst[i] / n;
-                }
-                else
-                {
-                    for (int i = 0; i < dst.Length; i++)
-                        data[i, j] = dst[i];
+                    float a = i;
+                    a = -2.0f * (float)Math.PI * a / n;
+                    float cos = (float)Math.Cos(a);
+                    float sin = (float)Math.Sin(a);
+                    Complex c1 = new Complex(cos, sin);
+                    c1 = Complex.Multiply(u[i], c1);
+                    f[i] = Complex.Add(g[i], c1);
+
+                    f[i + (int)n / 2] = Complex.Subtract(g[i], c1);
                 }
             }
         }
+
+        static void toWolframAlphaDefinition(ref Complex[] f)
+        {
+            float scaling = (float)(1.0 / Math.Sqrt(f.Length));
+            for (int i = 0; i < f.Length; i++)
+            {
+                f[i] = scaling * Complex.Conjugate(f[i]);
+            }
+        }
+
     }
 }

@@ -13,21 +13,18 @@ namespace ImageInterpolation.Filtering
 
         public static Bitmap Blur(Bitmap initialImage)
         {
-            var extended = new Bitmap(initialImage.Width + blurSize, initialImage.Height + blurSize);
-            LanczosInterpolator.FillExtended(initialImage, extended);
-
             var f = new double[3][,];
-            f[0] = new double[extended.Width, extended.Height];
-            f[1] = new double[extended.Width, extended.Height];
-            f[2] = new double[extended.Width, extended.Height];
+            f[0] = new double[initialImage.Width, initialImage.Height];
+            f[1] = new double[initialImage.Width, initialImage.Height];
+            f[2] = new double[initialImage.Width, initialImage.Height];
 
-            for (int i = 0; i < extended.Width; i++)
+            for (int i = 0; i < initialImage.Width; i++)
             {
-                for (int j = 0; j < extended.Height; j++)
+                for (int j = 0; j < initialImage.Height; j++)
                 {
-                    f[0][i, j] = extended.GetPixel(i, j).R;
-                    f[1][i, j] = extended.GetPixel(i, j).G;
-                    f[2][i, j] = extended.GetPixel(i, j).B;
+                    f[0][i, j] = initialImage.GetPixel(i, j).R;
+                    f[1][i, j] = initialImage.GetPixel(i, j).G;
+                    f[2][i, j] = initialImage.GetPixel(i, j).B;
                 }
             }
 
@@ -38,9 +35,9 @@ namespace ImageInterpolation.Filtering
                 return GaussianBlur(fi);
             }).ToArray();
 
-            for (int i = blurSize / 2; i < extended.Width - blurSize; i++)
+            for (int i = 0; i < initialImage.Width; i++)
             {
-                for (int j = blurSize / 2; j < extended.Height - blurSize; j++)
+                for (int j = 0; j < initialImage.Height; j++)
                 {
                     resultImage.SetPixel(i, j, Color.FromArgb((int)g[0][i, j], (int)g[1][i, j], (int)g[2][i, j]));
                 }

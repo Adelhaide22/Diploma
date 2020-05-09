@@ -5,12 +5,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Extreme.Mathematics;
 using Accord.Imaging;
 
 namespace ImageInterpolation.Filtering
 {
-	public class FourierTransform
+	public class Fourier
 	{	
 		public static Complex[,] TransformForward(double[,] f)
 		{

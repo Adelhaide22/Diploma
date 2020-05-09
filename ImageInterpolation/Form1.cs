@@ -26,6 +26,11 @@ namespace Lanczos
             
             openFileDialog1.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
             openFileDialog2.Filter = "Image files (*.jpg)|*.jpg|Bitmap files (*.bmp)|*.bmp";
+
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage; 
+            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox4.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         void button_loadScaled_Click(object sender, EventArgs e)
@@ -48,7 +53,6 @@ namespace Lanczos
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
 
             pictureBox1.Image = initialImage;
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         void btn_Edge_Click(object sender, EventArgs e)
@@ -62,29 +66,9 @@ namespace Lanczos
             var resampledImage = EdgeSensitiveInterpolator.Resample(scaledImage);
 
             pictureBox2.Image = resampledImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
-
-            //var n = origin.Width;
-            //var m = origin.Height;
-
-            //var f = 0.0;
-
-            //for (int i = 0; i < m - 1; i++)
-            //{
-            //    for (int j = 0; j < n - 1; j++)
-            //    {
-            //        f += Math.Pow((resampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
-            //            Math.Pow((resampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
-            //            Math.Pow((resampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
-            //    }
-            //}
-
-            //string s = 10 * Math.Log((255*255/(f/ (3 * n * m))), 10) + "\n";
-
-            //MessageBox.Show(s);
-
+            
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
@@ -98,7 +82,6 @@ namespace Lanczos
             var resampledImage = LanczosInterpolator.Resample(initialImage);
 
             pictureBox2.Image = resampledImage;      
-            //pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
             //var n = origin.Width;
@@ -125,16 +108,20 @@ namespace Lanczos
             var sw = new Stopwatch();
             sw.Start();
 
-            var initialImage = (Bitmap)pictureBox2.Image;
+            var initialImage = (Bitmap)pictureBox1.Image;
+
             var greyImage = WienerFilter.ToGray(initialImage);
             pictureBox2.Image = greyImage;
-            var reconstructedImage = WienerFilter.Filter(initialImage);
 
-            pictureBox3.Image = reconstructedImage;
-            pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
+            var brokenImage = GaussianFilter.Blur(initialImage);
+            pictureBox3.Image = brokenImage;
+
+            var reconstructedImage = WienerFilter.Filter(brokenImage);
+            pictureBox4.Image = reconstructedImage;
+
             sw.Stop();
 
-            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+            //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
         private void btn_Gaussian_Click(object sender, EventArgs e)
@@ -146,10 +133,9 @@ namespace Lanczos
             var brokenImage = GaussianFilter.Blur(initialImage);
 
             pictureBox2.Image = brokenImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
-            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+            //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
         private void btn_Sharpen_Click(object sender, EventArgs e)
@@ -161,7 +147,6 @@ namespace Lanczos
             var brokenImage = SharpenFilter.Sharpen(initialImage);
 
             pictureBox2.Image = brokenImage;
-            pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
 
             sw.Stop();
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());

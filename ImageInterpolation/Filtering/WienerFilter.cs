@@ -1,57 +1,36 @@
 ﻿using Accord.Imaging;
-using Accord.Imaging.Filters;
-using Extreme.Mathematics;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageInterpolation.Filtering
 {
     public static class WienerFilter
     {
-        public static Bitmap ToGray(Bitmap image)
-        {
-            var initialImage = image.ConvertTo8bpp();
-            initialImage.ConvertColor8bppToGrayscale8bpp();
-            return initialImage;
-        }
-
         public static Bitmap Filter(Bitmap image)
         {
             var initialImage = ToGray(image);
 
             var g = ComplexImage.FromBitmap(initialImage);
             var f = ComplexImage.FromBitmap(initialImage);
-
-            for (int i = 0; i < g.Width; i++)
-            {
-                for (int j = 0; j < g.Height; j++)
-                {
-                    g.Data[i, j] = initialImage.GetPixel(i, j).R;
-                    f.Data[i, j] = initialImage.GetPixel(i, j).R;
-                }
-            }
-
-            var H = GetComplexImageFromMatrix(GetGaussianCore(g));
+            var h = GetComplexImageFromMatrix(GetGaussianCore(g));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
-            
-            g.ForwardFourierTransform();
-            g.BackwardFourierTransform();
-            H.ForwardFourierTransform();
-            
-            var F = GetF(f, H, g, average, dispersion);
-            F.BackwardFourierTransform();
 
-            var result = F.ToBitmap();
-            return result;
+            var G = GetComplexImageFromMatrix(ComplexImageHelper.fft2(ToVector(g.Data)));
+            var H = GetComplexImageFromMatrix(ComplexImageHelper.fft2(ToVector(h.Data)));
+            
+            var F = GetF(f, H, G, average, dispersion);
+
+            f = GetComplexImageFromMatrix(ComplexImageHelper.bft2(ToVector(F.Data)));
+            return f.ToBitmap();
+
+
+
+
 
             //var g = new double[3][,];
             //g[0] = new double[initialImage.Width, initialImage.Height];
@@ -95,6 +74,37 @@ namespace ImageInterpolation.Filtering
             //return resultImage;
         }
 
+        private static Complex[] ToVector(Complex[,] data)
+        {
+            var vec = new Complex[data.Length];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                vec[i] = data[(i - i%data.GetLength(0)) / data.GetLength(0), i % data.GetLength(0)];
+            }
+
+            return vec;
+        }
+        private static ComplexImage GetComplexImageFromMatrix(Complex[,] core)
+        {
+            var bitmap = new Bitmap(core.GetLength(0), core.GetLength(1));
+
+            var bitmap8bpp = bitmap.ConvertTo8bpp();
+            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
+
+            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
+
+            for (int i = 0; i < complexImage.Width; i++)
+            {
+                for (int j = 0; j < complexImage.Height; j++)
+                {
+                    complexImage.Data[i, j] = core[i, j];
+                }
+            }
+
+            return complexImage;
+        }
+
         private static ComplexImage GetComplexImageFromMatrix(double[,] core)
         {
             var bitmap = new Bitmap(core.GetLength(0), core.GetLength(1));
@@ -118,7 +128,7 @@ namespace ImageInterpolation.Filtering
         private static ComplexImage GetF(ComplexImage F, ComplexImage H, ComplexImage G, Complex average, Complex dispersion)
         {
             var snr = GetSNR(average, dispersion);
-            snr = 1;
+            snr = 0.2;
 
             for (int i = 0; i < G.Width; i++)
             {
@@ -224,6 +234,15 @@ namespace ImageInterpolation.Filtering
                 return (Bitmap)System.Drawing.Image.FromStream(ms);
             }
         }
+
+        public static Bitmap ToGray(Bitmap image)
+        {
+            var initialImage = image.ConvertTo8bpp();
+            initialImage.ConvertColor8bppToGrayscale8bpp();
+            return initialImage;
+        }
+
+
 
 
 
