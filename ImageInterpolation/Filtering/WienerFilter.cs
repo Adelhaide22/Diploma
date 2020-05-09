@@ -9,10 +9,8 @@ namespace ImageInterpolation.Filtering
 {
     public static class WienerFilter
     {
-        public static Bitmap Filter(Bitmap image)
+        public static Bitmap Filter(Bitmap initialImage)
         {
-            var initialImage = ToGray(image);
-
             var g = ComplexImage.FromBitmap(initialImage);
             var f = ComplexImage.FromBitmap(initialImage);
             var h = GetComplexImageFromMatrix(GetGaussianCore(g));
@@ -149,7 +147,7 @@ namespace ImageInterpolation.Filtering
         private static double[,] GetGaussianCore(ComplexImage g)
         {
             var result = new double[g.Width, g.Height];
-            var blurSize = 5;
+            var blurSize = 9;
             var sigma = 5;
 
             var sum = 0.0;

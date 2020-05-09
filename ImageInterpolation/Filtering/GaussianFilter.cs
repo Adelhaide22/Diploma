@@ -9,7 +9,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class GaussianFilter
     {
-        private static int blurSize = 5;
+        private static int blurSize = 9;
 
         public static Bitmap Blur(Bitmap initialImage)
         {
@@ -28,7 +28,7 @@ namespace ImageInterpolation.Filtering
                 }
             }
 
-            var resultImage = new Bitmap(initialImage.Width, initialImage.Height);
+            var resultImage = new Bitmap(initialImage);
 
             var g = f.AsParallel().Select(fi =>
             {

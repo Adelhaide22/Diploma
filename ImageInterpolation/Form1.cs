@@ -113,10 +113,10 @@ namespace Lanczos
             var greyImage = WienerFilter.ToGray(initialImage);
             pictureBox2.Image = greyImage;
 
-            var brokenImage = GaussianFilter.Blur(initialImage);
+            var brokenImage = GaussianFilter.Blur(greyImage);
             pictureBox3.Image = brokenImage;
 
-            var reconstructedImage = WienerFilter.Filter(brokenImage);
+            var reconstructedImage = WienerFilter.Filter(WienerFilter.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
 
             sw.Stop();
