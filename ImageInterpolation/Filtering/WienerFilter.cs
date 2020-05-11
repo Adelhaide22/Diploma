@@ -1,4 +1,5 @@
 ﻿using Accord.Imaging;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,72 +11,35 @@ namespace ImageInterpolation.Filtering
     {
         public static Bitmap Filter(Bitmap initialImage)
         {
-            for (int i = 0; i < initialImage.Height; i++)
-            {
-                for (int j = 0; j < initialImage.Width; j++)
-                {
-                    System.Console.WriteLine(initialImage.GetPixel(i,j).R);
-                }
-            }
-
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = GetComplexImageFromMatrix(GetGaussianCore(g));
+            var h = GetComplexImageFromMatrix(GetCore(g, "gauss"));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
 
-            var G = GetComplexImageFromMatrix(ComplexImageHelper.fft2(ToVector(g.Data)));
-            var H = GetComplexImageFromMatrix(ComplexImageHelper.fft2(ToVector(h.Data)));
-            
+            var G = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(g.Data)));
+            var H = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(h.Data)));
+
             var F = GetF(H, G, average, dispersion);
 
-            var f = GetComplexImageFromMatrix(ComplexImageHelper.bft2(ToVector(F.Data)));
+            var f = GetComplexImageFromMatrix(ImageHelper.BFT2(ToVector(F.Data)));
+
+            //rotate
+            for (int i = 0; i < f.Height/2; i++)
+            {
+                for (int j = 0; j < f.Width/2; j++)
+                {
+                    var t = f.Data[i, j];
+                    f.Data[i, j] = f.Data[i + f.Height / 2, j + f.Width / 2];
+                    f.Data[i + f.Height / 2, j + f.Width / 2] = t;
+
+                    t = f.Data[i + f.Height / 2, j];
+                    f.Data[i + f.Height / 2, j] = f.Data[i, j + f.Width / 2];
+                    f.Data[i, j + f.Width / 2] = t;
+                }
+            }
+
             return f.ToBitmap();
-
-
-
-
-
-            //var g = new double[3][,];
-            //g[0] = new double[initialImage.Width, initialImage.Height];
-            //g[1] = new double[initialImage.Width, initialImage.Height];
-            //g[2] = new double[initialImage.Width, initialImage.Height];
-
-            //for (int i = 0; i < initialImage.Width; i++)
-            //{
-            //    for (int j = 0; j < initialImage.Height; j++)
-            //    {
-            //        g[0][i, j] = initialImage.GetPixel(i, j).R;
-            //        g[1][i, j] = initialImage.GetPixel(i, j).G;
-            //        g[2][i, j] = initialImage.GetPixel(i, j).B;
-            //    }
-            //}
-
-            //var f = g.AsParallel().Select(gi =>
-            //{
-            //    var average = GetAverage(gi);
-            //    var dispersion = GetDispersion(gi, average);
-            //    var h = GetGaussianCore(gi, 16);
-
-            //    var G = FourierTransform.TransformForward(gi);
-            //    var H = FourierTransform.TransformForward(h);
-
-            //    var F = GetF(H, G, average, dispersion);
-            //    var fi = FourierTransform.TransformBackward(F);
-            //    return fi;
-            //}).ToArray();
-
-            //var resultImage = new Bitmap(initialImage.Width, initialImage.Height);
-
-            //for (int i = 0; i < initialImage.Width; i++)
-            //{
-            //    for (int j = 0; j < initialImage.Height; j++)
-            //    {
-            //        resultImage.SetPixel(i, j, Color.FromArgb((int)f[0][i, j], (int)f[1][i, j], (int)f[2][i, j]));
-            //    }
-            //}
-
-            //return resultImage;
         }
 
         private static Complex[] ToVector(Complex[,] data)
@@ -84,14 +48,14 @@ namespace ImageInterpolation.Filtering
 
             for (int i = 0; i < data.Length; i++)
             {
-                vec[i] = data[(i - i%data.GetLength(0)) / data.GetLength(0), i % data.GetLength(0)];
+                vec[i] = data[(i - i%data.GetLength(1)) / data.GetLength(1), i % data.GetLength(1)];
             }
 
             return vec;
         }
         private static ComplexImage GetComplexImageFromMatrix(Complex[,] core)
         {
-            var bitmap = new Bitmap(core.GetLength(0), core.GetLength(1));
+            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
 
             var bitmap8bpp = bitmap.ConvertTo8bpp();
             bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
@@ -111,7 +75,7 @@ namespace ImageInterpolation.Filtering
 
         private static ComplexImage GetComplexImageFromMatrix(double[,] core)
         {
-            var bitmap = new Bitmap(core.GetLength(0), core.GetLength(1));
+            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
 
             var bitmap8bpp = bitmap.ConvertTo8bpp();
             bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
@@ -132,7 +96,7 @@ namespace ImageInterpolation.Filtering
         private static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex average, Complex dispersion)
         {
             var snr = GetSNR(average, dispersion);
-            snr = 0.2;
+            snr = 0.1;
 
             var bitmap = new Bitmap(G.Width, G.Height);
             var bitmap8bpp = bitmap.ConvertTo8bpp();
@@ -144,8 +108,8 @@ namespace ImageInterpolation.Filtering
             {
                 for (int j = 0; j < G.Width; j++)
                 {
-                    complexImage.Data[i, j] = (1 / H.Data[i, j]) * ((H.Data[i, j] * H.Data[i, j]) / (H.Data[i, j] * H.Data[i, j] + snr)) 
-                        * G.Data[i, j];
+                    complexImage.Data[i, j] = ((1 / H.Data[i, j]) * (Math.Pow(Complex.Abs(H.Data[i, j]), 2)
+                        / (Math.Pow(Complex.Abs(H.Data[i, j]), 2) + snr))) * G.Data[i, j];
                 }
             }
             return complexImage;
@@ -156,34 +120,43 @@ namespace ImageInterpolation.Filtering
             return average / Complex.Sqrt(dispersion);
         }
 
-        private static double[,] GetGaussianCore(ComplexImage g)
+        private static double[,] GetCore(ComplexImage g, string type)
         {
             var matrixSize = 9;
-            var matrix = GaussianFilter.GetCore();
+            var matrix = new double[matrixSize, matrixSize];
 
-            var result = new double[g.Width, g.Height];            
-
-            for (int l = 0; l < g.Width/2 - matrixSize/2 - 1; l++)
+            if (type == "gauss")
             {
-                for (int k = 0; k < g.Height/2 - matrixSize/2 - 1; k++)
+                matrix = GaussianFilter.GetCore();
+            }
+            if (type == "sharp")
+            {
+                matrix = SharpenFilter.GetCore();
+            }
+
+            var result = new double[g.Width, g.Height];
+
+            for (int l = 0; l < g.Height / 2 - matrixSize / 2 - 1; l++)
+            {
+                for (int k = 0; k < g.Width / 2 - matrixSize / 2 - 1; k++)
                 {
                     result[l, k] = 0;
                 }
             }
 
-            for (int l = g.Width / 2 + matrixSize / 2; l < g.Width; l++)
+            for (int l = g.Height / 2 + matrixSize / 2; l < g.Height; l++)
             {
-                for (int k = g.Height / 2 + matrixSize / 2; k < g.Height; k++)
+                for (int k = g.Width / 2 + matrixSize / 2; k < g.Width; k++)
                 {
                     result[l, k] = 0;
                 }
             }
 
-            for (int l = g.Width / 2 - matrixSize / 2 - 1; l < g.Width / 2 + matrixSize / 2; l++)
+            for (int l = g.Height / 2 - matrixSize / 2 - 1; l < g.Height / 2 + matrixSize / 2; l++)
             {
-                for (int k = g.Height / 2 - matrixSize / 2 - 1; k < g.Height / 2 + matrixSize / 2; k++)
+                for (int k = g.Width / 2 - matrixSize / 2 - 1; k < g.Width / 2 + matrixSize / 2; k++)
                 {
-                    result[l, k] = matrix[l - (g.Width / 2 - matrixSize / 2 - 1), k - (g.Height / 2 - matrixSize / 2 - 1)];
+                    result[l, k] = matrix[l - (g.Height / 2 - matrixSize / 2 - 1), k - (g.Width / 2 - matrixSize / 2 - 1)];
                 }
             }
 
@@ -193,9 +166,9 @@ namespace ImageInterpolation.Filtering
         private static Complex GetDispersion(Complex[,] layer, Complex average)
         {
             var sum = new Complex();
-            for (int i = 0; i < layer.GetLength(0); i++)
+            for (int i = 0; i < layer.GetLength(1); i++)
             {
-                for (int j = 0; j < layer.GetLength(1); j++)
+                for (int j = 0; j < layer.GetLength(0); j++)
                 {
                     sum += (layer[i, j] - average) * (layer[i, j] - average);
                 }
@@ -207,31 +180,14 @@ namespace ImageInterpolation.Filtering
         private static Complex GetAverage(Complex[,] layer)
         {
             var sum = new Complex();
-            for (int i = 0; i < layer.GetLength(0); i++)
+            for (int i = 0; i < layer.GetLength(1); i++)
             {
-                for (int j = 0; j < layer.GetLength(1); j++)
+                for (int j = 0; j < layer.GetLength(0); j++)
                 {
                     sum += layer[i, j];
                 }
             }
             return sum / layer.Length;
-        }
-
-        private static Bitmap ConvertTo8bpp(this Bitmap oldbmp)
-        {
-            using (var ms = new MemoryStream())
-            {
-                oldbmp.Save(ms, ImageFormat.Gif);
-                ms.Position = 0;
-                return (Bitmap)System.Drawing.Image.FromStream(ms);
-            }
-        }
-
-        public static Bitmap ToGray(Bitmap image)
-        {
-            var initialImage = image.ConvertTo8bpp();
-            initialImage.ConvertColor8bppToGrayscale8bpp();
-            return initialImage;
         }
     }
 }

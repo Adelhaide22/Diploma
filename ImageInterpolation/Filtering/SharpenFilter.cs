@@ -9,6 +9,8 @@ namespace ImageInterpolation.Filtering
 {
     public static class SharpenFilter
     {
+        private static int sharpSize = 9;
+
         public static Bitmap Sharpen(Bitmap initialImage)
         {
             var f = new double[3][,];
@@ -44,20 +46,26 @@ namespace ImageInterpolation.Filtering
             return resultImage;
         }
 
-        private static double[,] Sharp(double[,] f)
+        public static double[,] GetCore()
         {
-            var result = new double[f.GetLength(0), f.GetLength(1)];
-            var sharpSize = 3;
             var sharp = 5d;
 
-            var blurMatrix = new double[sharpSize, sharpSize];
+            var sharpMatrix = new double[sharpSize, sharpSize];
             for (int l = 0; l < sharpSize; l++)
             {
                 for (int k = 0; k < sharpSize; k++)
                 {
-                    blurMatrix[l, k] = l == k && k == 1 ? sharp : (1 - sharp) / 8;
+                    sharpMatrix[l, k] = l == k && k == 1 ? sharp : (1 - sharp) / 8;
                 }
             }
+
+            return sharpMatrix;
+        }
+
+        private static double[,] Sharp(double[,] f)
+        {
+            var result = new double[f.GetLength(0), f.GetLength(1)];
+            var sharpMatrix = GetCore();
 
             for (int i = sharpSize / 2; i < f.GetLength(0) - sharpSize / 2; i++)
             {
@@ -68,7 +76,7 @@ namespace ImageInterpolation.Filtering
                     {
                         for (int k = -sharpSize / 2; k <= sharpSize / 2; k++)
                         {
-                            temp += f[i - l, j - k] * blurMatrix[sharpSize / 2 + l, sharpSize / 2 + k];
+                            temp += f[i - l, j - k] * sharpMatrix[sharpSize / 2 + l, sharpSize / 2 + k];
                         }
                     }
                     result[i, j] = temp > 255 ? 255 : temp;

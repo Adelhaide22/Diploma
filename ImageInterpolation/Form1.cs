@@ -15,8 +15,6 @@ namespace Lanczos
 {
     public partial class Form1 : Form
     {
-        Bitmap origin;
-
         public Form1()
         {
             InitializeComponent();
@@ -40,7 +38,7 @@ namespace Lanczos
                 return;
             }
             
-            origin = (Bitmap)Image.FromFile(openFileDialog2.FileName);
+            Bitmap origin = (Bitmap)Image.FromFile(openFileDialog2.FileName);
         }
 
         void btn_openFile_Click(object sender, EventArgs e)
@@ -84,22 +82,7 @@ namespace Lanczos
             pictureBox2.Image = resampledImage;      
 
             sw.Stop();
-            //var n = origin.Width;
-            //var m = origin.Height;
-
-            //var f = 0.0;
-
-            //for (int i = 0; i < m - 1; i++)
-            //{
-            //    for (int j = 0; j < n - 1; j++)
-            //    {
-            //        f += Math.Pow((resampledImage.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
-            //            Math.Pow((resampledImage.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
-            //            Math.Pow((resampledImage.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
-            //    }
-            //}
-
-            //string s =  10 * Math.Log((255 * 255 / (f / (3 * n * m))), 10) + "\n";            
+                    
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
@@ -110,13 +93,13 @@ namespace Lanczos
 
             var initialImage = (Bitmap)pictureBox1.Image;
 
-            var greyImage = WienerFilter.ToGray(initialImage);
+            var greyImage = ImageHelper.ToGray(initialImage);
             pictureBox2.Image = greyImage;
 
             var brokenImage = GaussianFilter.Blur(greyImage);
             pictureBox3.Image = brokenImage;
 
-            var reconstructedImage = WienerFilter.Filter(WienerFilter.ToGray(brokenImage));
+            var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
 
             sw.Stop();
@@ -149,7 +132,7 @@ namespace Lanczos
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
-            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+            //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
         private Bitmap GetScaledImage(Bitmap initialImage)

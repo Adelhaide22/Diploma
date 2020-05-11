@@ -66,8 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Filtering\ComplexImageHelper.cs" />
-    <Compile Include="Filtering\Fourie.cs" />
+    <Compile Include="Filtering\ImageHelper.cs" />
     <Compile Include="Filtering\GaussianFilter.cs" />
     <Compile Include="Filtering\SharpenFilter.cs" />
     <Compile Include="Filtering\WienerFilter.cs" />

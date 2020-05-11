@@ -11,32 +11,6 @@ namespace ImageInterpolation.Filtering
     {
         private static int blurSize = 9;
 
-        public static double[,] GetCore()
-        {
-            var sigma = 5;
-
-            var sum = 0.0;
-            var blurMatrix = new double[blurSize, blurSize];
-            for (int l = 0; l < blurSize; l++)
-            {
-                for (int k = 0; k < blurSize; k++)
-                {
-                    blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-(l * l + k * k) / (2 * sigma * sigma));
-                    sum += blurMatrix[l, k];
-                }
-            }
-
-            for (int l = 0; l < blurSize; l++)
-            {
-                for (int k = 0; k < blurSize; k++)
-                {
-                    blurMatrix[l, k] /= sum;
-                }
-            }
-
-            return blurMatrix;
-        }
-
         public static Bitmap Blur(Bitmap initialImage)
         {
             var f = new double[3][,];
@@ -72,9 +46,8 @@ namespace ImageInterpolation.Filtering
             return resultImage;
         }
 
-        public static double[,] GaussianBlur(double[,] f)
+        public static double[,] GetCore()
         {
-            var result = new double[f.GetLength(0), f.GetLength(1)];
             var sigma = 5;
 
             var sum = 0.0;
@@ -96,9 +69,17 @@ namespace ImageInterpolation.Filtering
                 }
             }
 
-            for (int i = blurSize / 2; i < f.GetLength(0) - blurSize / 2; i++)
+            return blurMatrix;
+        }
+
+        public static double[,] GaussianBlur(double[,] f)
+        {
+            var result = new double[f.GetLength(1), f.GetLength(0)];
+            var blurMatrix = GetCore();
+
+            for (int i = blurSize / 2; i < f.GetLength(1) - blurSize / 2; i++)
             {
-                for (int j = blurSize / 2; j < f.GetLength(1) - blurSize / 2; j++)
+                for (int j = blurSize / 2; j < f.GetLength(0) - blurSize / 2; j++)
                 {
                     var temp = 0.0;
                     for (int l = -blurSize / 2; l <= blurSize / 2; l++)

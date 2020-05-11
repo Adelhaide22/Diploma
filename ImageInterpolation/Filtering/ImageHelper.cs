@@ -1,6 +1,9 @@
 ﻿using Accord.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -8,20 +11,56 @@ using System.Threading.Tasks;
 
 namespace ImageInterpolation.Filtering
 {
-    static class ComplexImageHelper
+    static class ImageHelper
     {
+        public static double GetQuality(Bitmap origin, Bitmap result)
+        {
+            var n = origin.Width;
+            var m = origin.Height;
+
+            var f = 0.0;
+
+            for (int i = 0; i < m - 1; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    f += Math.Pow((result.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2) +
+                        Math.Pow((result.GetPixel(i, j).B - origin.GetPixel(i, j).B), 2) +
+                        Math.Pow((result.GetPixel(i, j).G - origin.GetPixel(i, j).G), 2);
+                }
+            }
+
+            var s = 10 * Math.Log((255 * 255 / (f / (3 * n * m))), 10);
+
+            return s;
+        }
+
+
+        public static Bitmap ConvertTo8bpp(this Bitmap oldbmp)
+        {
+            using (var ms = new MemoryStream())
+            {
+                oldbmp.Save(ms, ImageFormat.Gif);
+                ms.Position = 0;
+                return (Bitmap)System.Drawing.Image.FromStream(ms);
+            }
+        }
+
+        public static Bitmap ToGray(Bitmap image)
+        {
+            var initialImage = image.ConvertTo8bpp();
+            initialImage.ConvertColor8bppToGrayscale8bpp();
+            return initialImage;
+        }
+
         private static Complex w(int k, int N)
         {
             if (k % N == 0) return 1;
             double arg = -2 * Math.PI * k / N;
             return new Complex(Math.Cos(arg), Math.Sin(arg));
         }
-        /// <summary>
-        /// Возвращает спектр сигнала
-        /// </summary>
-        /// <param name="x">Массив значений сигнала. Количество значений должно быть степенью 2</param>
-        /// <returns>Массив со значениями спектра сигнала</returns>
-        public static Complex[] fft(Complex[] x)
+        
+        public static Complex[] FFT(Complex[] x)
         {
             Complex[] X;
             int N = x.Length;
@@ -40,8 +79,8 @@ namespace ImageInterpolation.Filtering
                     x_even[i] = x[2 * i];
                     x_odd[i] = x[2 * i + 1];
                 }
-                Complex[] X_even = fft(x_even);
-                Complex[] X_odd = fft(x_odd);
+                Complex[] X_even = FFT(x_even);
+                Complex[] X_odd = FFT(x_odd);
                 X = new Complex[N];
                 for (int i = 0; i < N / 2; i++)
                 {
@@ -51,46 +90,29 @@ namespace ImageInterpolation.Filtering
             }
             return X;
         }
-        /// <summary>
-        /// Центровка массива значений полученных в fft (спектральная составляющая при нулевой частоте будет в центре массива)
-        /// </summary>
-        /// <param name="X">Массив значений полученный в fft</param>
-        /// <returns></returns>
-        public static Complex[] nfft(Complex[] X)
-        {
-            int N = X.Length;
-            Complex[] X_n = new Complex[N];
-            for (int i = 0; i < N / 2; i++)
-            {
-                X_n[i] = X[N / 2 + i];
-                X_n[N / 2 + i] = X[i];
-            }
-            return X_n;
-        }
 
-        public static Complex[,] fft2(Complex[] X)
+        public static Complex[,] FFT2(Complex[] X)
         {
-            var trans = fft(X);
-            //toWolframAlphaDefinition(ref trans);
+            var trans = FFT(X);
             var res = new Complex[(int)Math.Sqrt(trans.Length), (int)Math.Sqrt(trans.Length)];
-            for (int i = 0; i < res.GetLength(0); i++)
+            for (int i = 0; i < res.GetLength(1); i++)
             {
-                for (int j = 0; j < res.GetLength(1); j++)
+                for (int j = 0; j < res.GetLength(0); j++)
                 {
-                    res[i, j] = trans[i * res.GetLength(1) + j];
+                    res[i, j] = trans[i * res.GetLength(0) + j];
                 }
             }
             return res;
         }
 
-        public static Complex[] bft(Complex[] f)
+        public static Complex[] BFT(Complex[] f)
         {
             Complex[] F = new Complex[f.Length];
             for (int i = 0; i < f.Length; i++)
             {
                 F[i] = Complex.Conjugate(f[i]);
             }
-            ft(F.Length, ref F);
+            FT(F.Length, ref F);
             float scaling = (float)(1.0 / F.Length);
             for (int i = 0; i < F.Length; i++)
             {
@@ -100,22 +122,21 @@ namespace ImageInterpolation.Filtering
             return F;
         }
 
-        public static Complex[,] bft2(Complex[] X)
+        public static Complex[,] BFT2(Complex[] X)
         {
-            var trans = bft(X);
-            //toWolframAlphaDefinition(ref trans);
+            var trans = BFT(X);
             var res = new Complex[(int)Math.Sqrt(trans.Length), (int)Math.Sqrt(trans.Length)];
-            for (int i = 0; i < res.GetLength(0); i++)
+            for (int i = 0; i < res.GetLength(1); i++)
             {
-                for (int j = 0; j < res.GetLength(1); j++)
+                for (int j = 0; j < res.GetLength(0); j++)
                 {
-                    res[i, j] = trans[i * res.GetLength(1) + j];
+                    res[i, j] = trans[i * res.GetLength(0) + j];
                 }
             }
             return res;
         }
 
-        static void ft(float n, ref Complex[] f)
+        static void FT(float n, ref Complex[] f)
         {
             if (n > 1)
             {
@@ -128,8 +149,8 @@ namespace ImageInterpolation.Filtering
                     u[i] = f[i * 2 + 1];
                 }
 
-                ft(n / 2, ref g);
-                ft(n / 2, ref u);
+                FT(n / 2, ref g);
+                FT(n / 2, ref u);
 
                 for (int i = 0; i < n / 2; i++)
                 {
@@ -145,15 +166,5 @@ namespace ImageInterpolation.Filtering
                 }
             }
         }
-
-        static void toWolframAlphaDefinition(ref Complex[] f)
-        {
-            float scaling = (float)(1.0 / Math.Sqrt(f.Length));
-            for (int i = 0; i < f.Length; i++)
-            {
-                f[i] = scaling * Complex.Conjugate(f[i]);
-            }
-        }
-
     }
 }
