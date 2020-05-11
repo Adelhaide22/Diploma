@@ -96,7 +96,8 @@ namespace Lanczos
             var greyImage = ImageHelper.ToGray(initialImage);
             pictureBox2.Image = greyImage;
 
-            var brokenImage = SharpenFilter.Sharpen(greyImage);
+            var brokenImage = GaussianFilter.Blur(greyImage);
+            //var brokenImage = SharpenFilter.Sharpen(greyImage);
             pictureBox3.Image = brokenImage;
 
             var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage));
