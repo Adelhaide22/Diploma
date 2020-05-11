@@ -12,7 +12,7 @@ namespace ImageInterpolation.Filtering
         public static Bitmap Filter(Bitmap initialImage)
         {
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = GetComplexImageFromMatrix(GetCore(g, "gauss"));
+            var h = GetComplexImageFromMatrix(GetCore(g, "sharp"));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
@@ -122,15 +122,17 @@ namespace ImageInterpolation.Filtering
 
         private static double[,] GetCore(ComplexImage g, string type)
         {
-            var matrixSize = 9;
+            var matrixSize = 0;
             var matrix = new double[matrixSize, matrixSize];
 
             if (type == "gauss")
             {
+                matrixSize = GaussianFilter.BlurSize;
                 matrix = GaussianFilter.GetCore();
             }
             if (type == "sharp")
             {
+                matrixSize = SharpenFilter.SharpSize;
                 matrix = SharpenFilter.GetCore();
             }
 

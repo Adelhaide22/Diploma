@@ -9,7 +9,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class SharpenFilter
     {
-        private static int sharpSize = 9;
+        public static int SharpSize = 3;
 
         public static Bitmap Sharpen(Bitmap initialImage)
         {
@@ -50,10 +50,10 @@ namespace ImageInterpolation.Filtering
         {
             var sharp = 5d;
 
-            var sharpMatrix = new double[sharpSize, sharpSize];
-            for (int l = 0; l < sharpSize; l++)
+            var sharpMatrix = new double[SharpSize, SharpSize];
+            for (int l = 0; l < SharpSize; l++)
             {
-                for (int k = 0; k < sharpSize; k++)
+                for (int k = 0; k < SharpSize; k++)
                 {
                     sharpMatrix[l, k] = l == k && k == 1 ? sharp : (1 - sharp) / 8;
                 }
@@ -67,16 +67,16 @@ namespace ImageInterpolation.Filtering
             var result = new double[f.GetLength(0), f.GetLength(1)];
             var sharpMatrix = GetCore();
 
-            for (int i = sharpSize / 2; i < f.GetLength(0) - sharpSize / 2; i++)
+            for (int i = SharpSize / 2; i < f.GetLength(0) - SharpSize / 2; i++)
             {
-                for (int j = sharpSize / 2; j < f.GetLength(1) - sharpSize / 2; j++)
+                for (int j = SharpSize / 2; j < f.GetLength(1) - SharpSize / 2; j++)
                 {
                     var temp = 0.0;
-                    for (int l = -sharpSize / 2; l <= sharpSize / 2; l++)
+                    for (int l = -SharpSize / 2; l <= SharpSize / 2; l++)
                     {
-                        for (int k = -sharpSize / 2; k <= sharpSize / 2; k++)
+                        for (int k = -SharpSize / 2; k <= SharpSize / 2; k++)
                         {
-                            temp += f[i - l, j - k] * sharpMatrix[sharpSize / 2 + l, sharpSize / 2 + k];
+                            temp += f[i - l, j - k] * sharpMatrix[SharpSize / 2 + l, SharpSize / 2 + k];
                         }
                     }
                     result[i, j] = temp > 255 ? 255 : temp;

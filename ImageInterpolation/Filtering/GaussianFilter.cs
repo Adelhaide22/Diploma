@@ -9,7 +9,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class GaussianFilter
     {
-        private static int blurSize = 9;
+        public static int BlurSize = 9;
 
         public static Bitmap Blur(Bitmap initialImage)
         {
@@ -51,19 +51,19 @@ namespace ImageInterpolation.Filtering
             var sigma = 5;
 
             var sum = 0.0;
-            var blurMatrix = new double[blurSize, blurSize];
-            for (int l = 0; l < blurSize; l++)
+            var blurMatrix = new double[BlurSize, BlurSize];
+            for (int l = 0; l < BlurSize; l++)
             {
-                for (int k = 0; k < blurSize; k++)
+                for (int k = 0; k < BlurSize; k++)
                 {
                     blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-(l * l + k * k) / (2 * sigma * sigma));
                     sum += blurMatrix[l, k];
                 }
             }
 
-            for (int l = 0; l < blurSize; l++)
+            for (int l = 0; l < BlurSize; l++)
             {
-                for (int k = 0; k < blurSize; k++)
+                for (int k = 0; k < BlurSize; k++)
                 {
                     blurMatrix[l, k] /= sum;
                 }
@@ -77,16 +77,16 @@ namespace ImageInterpolation.Filtering
             var result = new double[f.GetLength(1), f.GetLength(0)];
             var blurMatrix = GetCore();
 
-            for (int i = blurSize / 2; i < f.GetLength(1) - blurSize / 2; i++)
+            for (int i = BlurSize / 2; i < f.GetLength(1) - BlurSize / 2; i++)
             {
-                for (int j = blurSize / 2; j < f.GetLength(0) - blurSize / 2; j++)
+                for (int j = BlurSize / 2; j < f.GetLength(0) - BlurSize / 2; j++)
                 {
                     var temp = 0.0;
-                    for (int l = -blurSize / 2; l <= blurSize / 2; l++)
+                    for (int l = -BlurSize / 2; l <= BlurSize / 2; l++)
                     {
-                        for (int k = -blurSize / 2; k <= blurSize / 2; k++)
+                        for (int k = -BlurSize / 2; k <= BlurSize / 2; k++)
                         {
-                            temp += f[i - l, j - k] * blurMatrix[blurSize / 2 + l, blurSize / 2 + k];
+                            temp += f[i - l, j - k] * blurMatrix[BlurSize / 2 + l, BlurSize / 2 + k];
                         }
                     }
                     result[i, j] = temp;
