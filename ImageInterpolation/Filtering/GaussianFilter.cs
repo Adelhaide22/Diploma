@@ -11,6 +11,32 @@ namespace ImageInterpolation.Filtering
     {
         private static int blurSize = 9;
 
+        public static double[,] GetCore()
+        {
+            var sigma = 5;
+
+            var sum = 0.0;
+            var blurMatrix = new double[blurSize, blurSize];
+            for (int l = 0; l < blurSize; l++)
+            {
+                for (int k = 0; k < blurSize; k++)
+                {
+                    blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-(l * l + k * k) / (2 * sigma * sigma));
+                    sum += blurMatrix[l, k];
+                }
+            }
+
+            for (int l = 0; l < blurSize; l++)
+            {
+                for (int k = 0; k < blurSize; k++)
+                {
+                    blurMatrix[l, k] /= sum;
+                }
+            }
+
+            return blurMatrix;
+        }
+
         public static Bitmap Blur(Bitmap initialImage)
         {
             var f = new double[3][,];
