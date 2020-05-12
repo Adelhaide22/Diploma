@@ -1,8 +1,6 @@
 ﻿using Accord.Imaging;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Numerics;
 
 namespace ImageInterpolation.Filtering
@@ -16,11 +14,12 @@ namespace ImageInterpolation.Filtering
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
+            var snr = GetSNR(average, dispersion);
 
             var G = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(g.Data)));
             var H = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(h.Data)));
 
-            var F = GetF(H, G, average, dispersion);
+            var F = GetF(H, G, 0.015);
 
             var f = GetComplexImageFromMatrix(ImageHelper.BFT2(ToVector(F.Data)));
 
@@ -93,11 +92,8 @@ namespace ImageInterpolation.Filtering
             return complexImage;
         }
 
-        private static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex average, Complex dispersion)
-        {
-            var snr = GetSNR(average, dispersion);
-            snr = 0.1;
-
+        private static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex snr)
+        {            
             var bitmap = new Bitmap(G.Width, G.Height);
             var bitmap8bpp = bitmap.ConvertTo8bpp();
             bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
@@ -134,6 +130,10 @@ namespace ImageInterpolation.Filtering
             {
                 matrixSize = SharpenFilter.SharpSize;
                 matrix = SharpenFilter.GetCore();
+            }
+            if (type == "predict")
+            {
+
             }
 
             var result = new double[g.Width, g.Height];

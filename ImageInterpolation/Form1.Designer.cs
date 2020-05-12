@@ -76,17 +76,17 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(454, 103);
+            this.pictureBox1.Location = new System.Drawing.Point(291, 36);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox1.Size = new System.Drawing.Size(400, 400);
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(749, 103);
+            this.pictureBox2.Location = new System.Drawing.Point(714, 36);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox2.Size = new System.Drawing.Size(400, 400);
             this.pictureBox2.TabIndex = 5;
             this.pictureBox2.TabStop = false;
             // 
@@ -96,7 +96,7 @@
             // 
             // btn_loadScaled
             // 
-            this.btn_loadScaled.Location = new System.Drawing.Point(169, 35);
+            this.btn_loadScaled.Location = new System.Drawing.Point(133, 36);
             this.btn_loadScaled.Name = "btn_loadScaled";
             this.btn_loadScaled.Size = new System.Drawing.Size(75, 23);
             this.btn_loadScaled.TabIndex = 6;
@@ -119,9 +119,9 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Location = new System.Drawing.Point(454, 392);
+            this.pictureBox3.Location = new System.Drawing.Point(291, 457);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox3.Size = new System.Drawing.Size(400, 400);
             this.pictureBox3.TabIndex = 9;
             this.pictureBox3.TabStop = false;
             // 
@@ -147,9 +147,9 @@
             // 
             // pictureBox4
             // 
-            this.pictureBox4.Location = new System.Drawing.Point(749, 392);
+            this.pictureBox4.Location = new System.Drawing.Point(714, 457);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox4.Size = new System.Drawing.Size(400, 400);
             this.pictureBox4.TabIndex = 12;
             this.pictureBox4.TabStop = false;
             // 
@@ -157,7 +157,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1066, 686);
+            this.ClientSize = new System.Drawing.Size(1141, 877);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.btn_Sharpen);
             this.Controls.Add(this.btn_Gaussian);
