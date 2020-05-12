@@ -346,7 +346,6 @@ namespace ImageInterpolation.Filtering
 
         public static Bitmap GetCoreImage(Bitmap initialImage, Filter filter)
         {
-            var bitmap = new Bitmap(initialImage);
             var g = ComplexImage.FromBitmap(initialImage);
             var h = GetComplexImageFromMatrix(WienerFilter.GetCore(g, filter));
 

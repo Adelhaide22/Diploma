@@ -42,6 +42,7 @@
             this.btn_Sharpen = new System.Windows.Forms.Button();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.btn_motion = new System.Windows.Forms.Button();
+            this.btn_WienerPredict = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -164,11 +165,22 @@
             this.btn_motion.UseVisualStyleBackColor = true;
             this.btn_motion.Click += new System.EventHandler(this.btn_motion_Click);
             // 
+            // btn_WienerPredict
+            // 
+            this.btn_WienerPredict.Location = new System.Drawing.Point(33, 297);
+            this.btn_WienerPredict.Name = "btn_WienerPredict";
+            this.btn_WienerPredict.Size = new System.Drawing.Size(123, 23);
+            this.btn_WienerPredict.TabIndex = 14;
+            this.btn_WienerPredict.Text = "Wiener Prediction ";
+            this.btn_WienerPredict.UseVisualStyleBackColor = true;
+            this.btn_WienerPredict.Click += new System.EventHandler(this.btn_WienerPredict_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1141, 877);
+            this.Controls.Add(this.btn_WienerPredict);
             this.Controls.Add(this.btn_motion);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.btn_Sharpen);
@@ -207,6 +219,7 @@
         private System.Windows.Forms.Button btn_Sharpen;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.Button btn_motion;
+        private System.Windows.Forms.Button btn_WienerPredict;
     }
 }
 

@@ -166,5 +166,28 @@ namespace Lanczos
             sw.Stop();
             Filter = ImageHelper.Filter.Motion;
         }
+
+        private void btn_WienerPredict_Click(object sender, EventArgs e)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var initialImage = (Bitmap)pictureBox1.Image;
+
+            var greyImage = ImageHelper.ToGray(initialImage);
+            pictureBox1.Image = greyImage;
+
+            var brokenImage = GaussianFilter.Blur(greyImage);
+            Filter = ImageHelper.Filter.Predict;
+            pictureBox2.Image = brokenImage;
+
+            var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), Filter);
+            pictureBox3.Image = coreImage;
+
+            var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
+            pictureBox4.Image = reconstructedImage;
+
+            sw.Stop();
+        }
     }
 }
