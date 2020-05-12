@@ -41,6 +41,7 @@
             this.btn_Gaussian = new System.Windows.Forms.Button();
             this.btn_Sharpen = new System.Windows.Forms.Button();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.btn_motion = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -109,7 +110,7 @@
             // 
             // btn_Wiener
             // 
-            this.btn_Wiener.Location = new System.Drawing.Point(34, 377);
+            this.btn_Wiener.Location = new System.Drawing.Point(33, 253);
             this.btn_Wiener.Name = "btn_Wiener";
             this.btn_Wiener.Size = new System.Drawing.Size(122, 23);
             this.btn_Wiener.TabIndex = 8;
@@ -127,7 +128,7 @@
             // 
             // btn_Gaussian
             // 
-            this.btn_Gaussian.Location = new System.Drawing.Point(34, 282);
+            this.btn_Gaussian.Location = new System.Drawing.Point(33, 474);
             this.btn_Gaussian.Name = "btn_Gaussian";
             this.btn_Gaussian.Size = new System.Drawing.Size(121, 23);
             this.btn_Gaussian.TabIndex = 10;
@@ -137,7 +138,7 @@
             // 
             // btn_Sharpen
             // 
-            this.btn_Sharpen.Location = new System.Drawing.Point(34, 327);
+            this.btn_Sharpen.Location = new System.Drawing.Point(33, 519);
             this.btn_Sharpen.Name = "btn_Sharpen";
             this.btn_Sharpen.Size = new System.Drawing.Size(122, 23);
             this.btn_Sharpen.TabIndex = 11;
@@ -153,11 +154,22 @@
             this.pictureBox4.TabIndex = 12;
             this.pictureBox4.TabStop = false;
             // 
+            // btn_motion
+            // 
+            this.btn_motion.Location = new System.Drawing.Point(33, 429);
+            this.btn_motion.Name = "btn_motion";
+            this.btn_motion.Size = new System.Drawing.Size(121, 23);
+            this.btn_motion.TabIndex = 13;
+            this.btn_motion.Text = "Motion Filter";
+            this.btn_motion.UseVisualStyleBackColor = true;
+            this.btn_motion.Click += new System.EventHandler(this.btn_motion_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1141, 877);
+            this.Controls.Add(this.btn_motion);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.btn_Sharpen);
             this.Controls.Add(this.btn_Gaussian);
@@ -194,6 +206,7 @@
         private System.Windows.Forms.Button btn_Gaussian;
         private System.Windows.Forms.Button btn_Sharpen;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Button btn_motion;
     }
 }
 

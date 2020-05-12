@@ -10,8 +10,7 @@ namespace ImageInterpolation.Filtering
 
         public static Bitmap Blur(Bitmap initialImage)
         {
-            var extendedImage = GetExtended(initialImage);
-            return extendedImage;
+            var extendedImage = ImageHelper.GetExtended(initialImage, BlurSize);
 
             var f = new double[3][,];
             f[0] = new double[extendedImage.Width, extendedImage.Height];
@@ -43,106 +42,9 @@ namespace ImageInterpolation.Filtering
                 }
             }
 
-            return Crop(resultImage, initialImage);
+            return ImageHelper.Crop(resultImage, initialImage, BlurSize);
         }
-
-        private static Bitmap Crop(Bitmap resultImage, Bitmap initialImage)
-        {
-            var croped = new Bitmap(initialImage.Width, initialImage.Height);
-
-            for (int i = 0; i < croped.Height; i++)
-            {
-                for (int j = 0; j < croped.Width; j++)
-                {
-                    croped.SetPixel(i, j, resultImage.GetPixel(i + BlurSize / 2, j + BlurSize / 2));
-                }
-            }
-
-            return croped;
-        }
-
-        private static Bitmap GetExtended(Bitmap initialImage)
-        {
-            var extended = new Bitmap(initialImage.Width + BlurSize, initialImage.Height + BlurSize);
-
-            //copy to center
-            for (int i = BlurSize / 2; i < initialImage.Height + BlurSize / 2 - 1; i++)
-            {
-                for (int j = BlurSize / 2; j < initialImage.Width + BlurSize / 2 - 1; j++)
-                {
-                    extended.SetPixel(i, j, initialImage.GetPixel(i - BlurSize/2, j - BlurSize / 2));
-                }
-            }
-
-            //left right part
-            for (int i = BlurSize/2; i < initialImage.Height + BlurSize/2 - 1; i++)
-            {
-                for (int j = 0; j < BlurSize / 2; j++)
-                {
-                    extended.SetPixel(i, j, initialImage.GetPixel(i - BlurSize / 2, 0));
-                }
-
-                for (int j = initialImage.Width + BlurSize/2 - 1; j < initialImage.Width + BlurSize; j++)
-                {
-                    extended.SetPixel(i, j, initialImage.GetPixel(i - BlurSize/2, initialImage.Height - 1));
-                }
-            }
-
-            //up down
-            for (int i = 0; i < BlurSize/2; i++)
-            {
-                for (int j = BlurSize/2; j < initialImage.Width + BlurSize/2 - 1; j++)
-                {
-                    extended.SetPixel(i, j, initialImage.GetPixel(0, j - BlurSize / 2));
-                }
-            }
-            for (int i = initialImage.Width + BlurSize/2 - 1; i < extended.Width; i++)
-            {
-                for (int j = BlurSize / 2; j < initialImage.Width + BlurSize / 2 - 1; j++)
-                {
-                    extended.SetPixel(i, j, initialImage.GetPixel(initialImage.Height - 1, j - BlurSize/2));
-                }
-            }
-
-            //corners
-            for (int i = BlurSize / 2 + 1; i >= 0; i--)
-            {
-                for (int j = BlurSize / 2 + 1; j >= 0; j--)
-                {
-                    extended.SetPixel(i, j, Color.FromArgb(
-                        (extended.GetPixel(i, j + 1).R + extended.GetPixel(i + 1, j).R) / 2,
-                        (extended.GetPixel(i, j + 1).G + extended.GetPixel(i + 1, j).G) / 2,
-                        (extended.GetPixel(i, j + 1).B + extended.GetPixel(i + 1, j).B) / 2));
-                }
-                for (int j = initialImage.Width + BlurSize / 2 - 1; j < initialImage.Width + BlurSize; j++)
-                {
-                    extended.SetPixel(i, j, Color.FromArgb(
-                        (extended.GetPixel(i, j - 1).R + extended.GetPixel(i + 1, j).R) / 2,
-                        (extended.GetPixel(i, j - 1).G + extended.GetPixel(i + 1, j).G) / 2,
-                        (extended.GetPixel(i, j - 1).B + extended.GetPixel(i + 1, j).B) / 2));
-                }
-            }
-            for (int i = initialImage.Height + BlurSize / 2 - 1; i < initialImage.Height + BlurSize; i++)
-            {
-                for (int j = initialImage.Width + BlurSize / 2 - 1; j < initialImage.Width + BlurSize; j++)
-                {
-                    extended.SetPixel(i, j, Color.FromArgb(
-                        (extended.GetPixel(i, j - 1).R + extended.GetPixel(i - 1, j).R) / 2,
-                        (extended.GetPixel(i, j - 1).G + extended.GetPixel(i - 1, j).G) / 2,
-                        (extended.GetPixel(i, j - 1).B + extended.GetPixel(i - 1, j).B) / 2));
-                }
-                for (int j = BlurSize / 2 + 1; j >= 0; j--)
-                {
-                    extended.SetPixel(i, j, Color.FromArgb(
-                        (extended.GetPixel(i, j + 1).R + extended.GetPixel(i - 1, j).R) / 2,
-                        (extended.GetPixel(i, j + 1).G + extended.GetPixel(i - 1, j).G) / 2,
-                        (extended.GetPixel(i, j + 1).B + extended.GetPixel(i - 1, j).B) / 2));
-                }
-            }
-
-            return extended;
-        }
-
+        
         public static double[,] GetCore()
         {
             var sigma = 7;

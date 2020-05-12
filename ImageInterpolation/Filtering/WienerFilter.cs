@@ -10,7 +10,7 @@ namespace ImageInterpolation.Filtering
         public static Bitmap Filter(Bitmap initialImage)
         {
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = GetComplexImageFromMatrix(GetCore(g, "gauss"));
+            var h = GetComplexImageFromMatrix(GetCore(g, "motion"));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
@@ -130,6 +130,11 @@ namespace ImageInterpolation.Filtering
             {
                 matrixSize = SharpenFilter.SharpSize;
                 matrix = SharpenFilter.GetCore();
+            }
+            if (type == "motion")
+            {
+                matrixSize = MotionFilter.MotionSize;
+                matrix = MotionFilter.GetCore();
             }
             if (type == "predict")
             {

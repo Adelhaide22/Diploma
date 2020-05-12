@@ -9,6 +9,103 @@ namespace ImageInterpolation.Filtering
 {
     static class ImageHelper
     {
+        public static Bitmap Crop(Bitmap resultImage, Bitmap initialImage, int matrixSize)
+        {
+            var croped = new Bitmap(initialImage.Width, initialImage.Height);
+
+            for (int i = 0; i < croped.Height; i++)
+            {
+                for (int j = 0; j < croped.Width; j++)
+                {
+                    croped.SetPixel(i, j, resultImage.GetPixel(i + matrixSize / 2, j + matrixSize / 2));
+                }
+            }
+
+            return croped;
+        }
+
+        public static Bitmap GetExtended(Bitmap initialImage, int matrixSize)
+        {
+            var extended = new Bitmap(initialImage.Width + matrixSize, initialImage.Height + matrixSize);
+
+            //copy to center
+            for (int i = matrixSize / 2; i < initialImage.Height + matrixSize / 2 - 1; i++)
+            {
+                for (int j = matrixSize / 2; j < initialImage.Width + matrixSize / 2 - 1; j++)
+                {
+                    extended.SetPixel(i, j, initialImage.GetPixel(i - matrixSize / 2, j - matrixSize / 2));
+                }
+            }
+
+            //left right part
+            for (int i = matrixSize / 2; i < initialImage.Height + matrixSize / 2 - 1; i++)
+            {
+                for (int j = 0; j < matrixSize / 2; j++)
+                {
+                    extended.SetPixel(i, j, initialImage.GetPixel(i - matrixSize / 2, 0));
+                }
+
+                for (int j = initialImage.Width + matrixSize / 2 - 1; j < initialImage.Width + matrixSize; j++)
+                {
+                    extended.SetPixel(i, j, initialImage.GetPixel(i - matrixSize / 2, initialImage.Height - 1));
+                }
+            }
+
+            //up down
+            for (int i = 0; i < matrixSize / 2; i++)
+            {
+                for (int j = matrixSize / 2; j < initialImage.Width + matrixSize / 2 - 1; j++)
+                {
+                    extended.SetPixel(i, j, initialImage.GetPixel(0, j - matrixSize / 2));
+                }
+            }
+            for (int i = initialImage.Width + matrixSize / 2 - 1; i < extended.Width; i++)
+            {
+                for (int j = matrixSize / 2; j < initialImage.Width + matrixSize / 2 - 1; j++)
+                {
+                    extended.SetPixel(i, j, initialImage.GetPixel(initialImage.Height - 1, j - matrixSize / 2));
+                }
+            }
+
+            //corners
+            for (int i = matrixSize / 2 + 1; i >= 0; i--)
+            {
+                for (int j = matrixSize / 2 + 1; j >= 0; j--)
+                {
+                    extended.SetPixel(i, j, Color.FromArgb(
+                        (extended.GetPixel(i, j + 1).R + extended.GetPixel(i + 1, j).R) / 2,
+                        (extended.GetPixel(i, j + 1).G + extended.GetPixel(i + 1, j).G) / 2,
+                        (extended.GetPixel(i, j + 1).B + extended.GetPixel(i + 1, j).B) / 2));
+                }
+                for (int j = initialImage.Width + matrixSize / 2 - 1; j < initialImage.Width + matrixSize; j++)
+                {
+                    extended.SetPixel(i, j, Color.FromArgb(
+                        (extended.GetPixel(i, j - 1).R + extended.GetPixel(i + 1, j).R) / 2,
+                        (extended.GetPixel(i, j - 1).G + extended.GetPixel(i + 1, j).G) / 2,
+                        (extended.GetPixel(i, j - 1).B + extended.GetPixel(i + 1, j).B) / 2));
+                }
+            }
+            for (int i = initialImage.Height + matrixSize / 2 - 1; i < initialImage.Height + matrixSize; i++)
+            {
+                for (int j = initialImage.Width + matrixSize / 2 - 1; j < initialImage.Width + matrixSize; j++)
+                {
+                    extended.SetPixel(i, j, Color.FromArgb(
+                        (extended.GetPixel(i, j - 1).R + extended.GetPixel(i - 1, j).R) / 2,
+                        (extended.GetPixel(i, j - 1).G + extended.GetPixel(i - 1, j).G) / 2,
+                        (extended.GetPixel(i, j - 1).B + extended.GetPixel(i - 1, j).B) / 2));
+                }
+                for (int j = matrixSize / 2 + 1; j >= 0; j--)
+                {
+                    extended.SetPixel(i, j, Color.FromArgb(
+                        (extended.GetPixel(i, j + 1).R + extended.GetPixel(i - 1, j).R) / 2,
+                        (extended.GetPixel(i, j + 1).G + extended.GetPixel(i - 1, j).G) / 2,
+                        (extended.GetPixel(i, j + 1).B + extended.GetPixel(i - 1, j).B) / 2));
+                }
+            }
+
+            return extended;
+        }
+
         public static double GetQuality(Bitmap origin, Bitmap result)
         {
             var n = origin.Width;
@@ -161,6 +258,21 @@ namespace ImageInterpolation.Filtering
                     f[i + (int)n / 2] = Complex.Subtract(g[i], c1);
                 }
             }
+        }
+
+        public static Bitmap GetScaledImage(Bitmap initialImage)
+        {
+            var scaledImage = new Bitmap(initialImage.Width * 2, initialImage.Height * 2);
+
+            for (int i = 0; i < scaledImage.Height - 2; i += 2)
+            {
+                for (int j = 0; j < scaledImage.Width - 2; j += 2)
+                {
+                    scaledImage.SetPixel(i, j, initialImage.GetPixel(i / 2, j / 2));
+                }
+            }
+
+            return scaledImage;
         }
     }
 }

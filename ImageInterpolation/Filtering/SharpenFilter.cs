@@ -9,42 +9,44 @@ namespace ImageInterpolation.Filtering
 
         public static Bitmap Sharpen(Bitmap initialImage)
         {
-            var f = new double[3][,];
-            f[0] = new double[initialImage.Width, initialImage.Height];
-            f[1] = new double[initialImage.Width, initialImage.Height];
-            f[2] = new double[initialImage.Width, initialImage.Height];
+            var extendedImage = ImageHelper.GetExtended(initialImage, SharpSize);
 
-            for (int i = 0; i < initialImage.Width; i++)
+            var f = new double[3][,];
+            f[0] = new double[extendedImage.Width, extendedImage.Height];
+            f[1] = new double[extendedImage.Width, extendedImage.Height];
+            f[2] = new double[extendedImage.Width, extendedImage.Height];
+
+            for (int i = 0; i < extendedImage.Width; i++)
             {
-                for (int j = 0; j < initialImage.Height; j++)
+                for (int j = 0; j < extendedImage.Height; j++)
                 {
-                    f[0][i, j] = initialImage.GetPixel(i, j).R;
-                    f[1][i, j] = initialImage.GetPixel(i, j).G;
-                    f[2][i, j] = initialImage.GetPixel(i, j).B;
+                    f[0][i, j] = extendedImage.GetPixel(i, j).R;
+                    f[1][i, j] = extendedImage.GetPixel(i, j).G;
+                    f[2][i, j] = extendedImage.GetPixel(i, j).B;
                 }
             }
 
-            var resultImage = new Bitmap(initialImage.Width, initialImage.Height);
+            var resultImage = new Bitmap(extendedImage);
 
             var g = f.AsParallel().Select(fi =>
             {
                 return Sharp(fi);
             }).ToArray();
 
-            for (int i = 0; i < initialImage.Width; i++)
+            for (int i = 0; i < extendedImage.Width; i++)
             {
-                for (int j = 0; j < initialImage.Height; j++)
+                for (int j = 0; j < extendedImage.Height; j++)
                 {
                     resultImage.SetPixel(i, j, Color.FromArgb((int)g[0][i, j], (int)g[1][i, j], (int)g[2][i, j]));
                 }
             }
 
-            return resultImage;
+            return ImageHelper.Crop(resultImage, initialImage, SharpSize);
         }
 
         public static double[,] GetCore()
         {
-            var sharp = 5d;
+            var sharp = 3d;
 
             var sharpMatrix = new double[SharpSize, SharpSize];
             for (int l = 0; l < SharpSize; l++)

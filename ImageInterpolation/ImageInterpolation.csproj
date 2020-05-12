@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Filtering\ImageHelper.cs" />
     <Compile Include="Filtering\GaussianFilter.cs" />
+    <Compile Include="Filtering\MotionFilter.cs" />
     <Compile Include="Filtering\SharpenFilter.cs" />
     <Compile Include="Filtering\WienerFilter.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

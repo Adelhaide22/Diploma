@@ -53,7 +53,7 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var scaledImage = GetScaledImage(initialImage);
+            var scaledImage = ImageHelper.GetScaledImage(initialImage);
 
             var resampledImage = EdgeSensitiveInterpolator.Resample(scaledImage);
 
@@ -89,8 +89,9 @@ namespace Lanczos
 
             var greyImage = ImageHelper.ToGray(initialImage);
             pictureBox2.Image = greyImage;
-
-            var brokenImage = GaussianFilter.Blur(greyImage);
+                        
+            var brokenImage = MotionFilter.Motion(greyImage);
+            //var brokenImage = GaussianFilter.Blur(greyImage);
             //var brokenImage = SharpenFilter.Sharpen(greyImage);
             pictureBox3.Image = brokenImage;
 
@@ -130,20 +131,17 @@ namespace Lanczos
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
-        private Bitmap GetScaledImage(Bitmap initialImage)
+        private void btn_motion_Click(object sender, EventArgs e)
         {
-            var scaledImage = new Bitmap(initialImage.Width * 2, initialImage.Height * 2);
+            var sw = new Stopwatch();
+            sw.Start();
 
-            for (int i = 0; i < scaledImage.Height - 2; i += 2)
-            {
-                for (int j = 0; j < scaledImage.Width - 2; j += 2)
-                {
-                    scaledImage.SetPixel(i, j, initialImage.GetPixel(i / 2, j / 2));
-                }
-            }
+            var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+            var brokenImage = MotionFilter.Motion(initialImage);
 
-            return scaledImage;
+            pictureBox2.Image = brokenImage;
+
+            sw.Stop();
         }
-
     }
 }
