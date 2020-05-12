@@ -37,7 +37,7 @@ namespace ImageInterpolation.Filtering
                 }
             }
 
-            //left right part
+            //left right
             for (int i = matrixSize / 2; i < initialImage.Height + matrixSize / 2 - 1; i++)
             {
                 for (int j = 0; j < matrixSize / 2; j++)

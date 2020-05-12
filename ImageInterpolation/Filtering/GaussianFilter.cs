@@ -55,7 +55,8 @@ namespace ImageInterpolation.Filtering
             {
                 for (int k = 0; k < BlurSize; k++)
                 {
-                    blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-(l * l + k * k) / (2 * sigma * sigma));
+                    blurMatrix[l, k] = 1 / Math.Sqrt(2 * Math.PI * sigma * sigma) * Math.Exp(-((l - BlurSize/2) * (l - BlurSize / 2)
+                        + (k - BlurSize / 2) * (k - BlurSize / 2)) / (2 * sigma * sigma));
                     sum += blurMatrix[l, k];
                 }
             }
