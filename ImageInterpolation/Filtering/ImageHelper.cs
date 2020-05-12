@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace ImageInterpolation.Filtering
 {
-    static class ImageHelper
+    public static class ImageHelper
     {
         public static Bitmap Crop(Bitmap resultImage, Bitmap initialImage, int matrixSize)
         {
@@ -104,6 +104,23 @@ namespace ImageInterpolation.Filtering
             }
 
             return extended;
+        }
+
+        internal static void Rotate(ComplexImage f)
+        {
+            for (int i = 0; i < f.Height / 2; i++)
+            {
+                for (int j = 0; j < f.Width / 2; j++)
+                {
+                    var t = f.Data[i, j];
+                    f.Data[i, j] = f.Data[i + f.Height / 2, j + f.Width / 2];
+                    f.Data[i + f.Height / 2, j + f.Width / 2] = t;
+
+                    t = f.Data[i + f.Height / 2, j];
+                    f.Data[i + f.Height / 2, j] = f.Data[i, j + f.Width / 2];
+                    f.Data[i, j + f.Width / 2] = t;
+                }
+            }
         }
 
         public static double GetQuality(Bitmap origin, Bitmap result)
@@ -273,6 +290,83 @@ namespace ImageInterpolation.Filtering
             }
 
             return scaledImage;
+        }
+
+        public static Complex[] ToVector(Complex[,] data)
+        {
+            var vec = new Complex[data.Length];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                vec[i] = data[(i - i % data.GetLength(1)) / data.GetLength(1), i % data.GetLength(1)];
+            }
+
+            return vec;
+        }
+        public static ComplexImage GetComplexImageFromMatrix(Complex[,] core)
+        {
+            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
+
+            var bitmap8bpp = bitmap.ConvertTo8bpp();
+            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
+
+            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
+
+            for (int i = 0; i < complexImage.Height; i++)
+            {
+                for (int j = 0; j < complexImage.Width; j++)
+                {
+                    complexImage.Data[i, j] = core[i, j];
+                }
+            }
+
+            return complexImage;
+        }
+
+        public static ComplexImage GetComplexImageFromMatrix(double[,] core)
+        {
+            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
+
+            var bitmap8bpp = bitmap.ConvertTo8bpp();
+            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
+
+            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
+
+            for (int i = 0; i < complexImage.Height; i++)
+            {
+                for (int j = 0; j < complexImage.Width; j++)
+                {
+                    complexImage.Data[i, j] = core[i, j];
+                }
+            }
+
+            return complexImage;
+        }
+
+
+        public static Bitmap GetCoreImage(Bitmap initialImage, Filter filter)
+        {
+            var bitmap = new Bitmap(initialImage);
+            var g = ComplexImage.FromBitmap(initialImage);
+            var h = GetComplexImageFromMatrix(WienerFilter.GetCore(g, filter));
+
+            for (int i = 0; i < h.Height; i++)
+            {
+                for (int j = 0; j < h.Width; j++)
+                {
+                    h.Data[i, j] *= 255;
+                }
+            }
+
+            return h.ToBitmap();
+        }
+
+        public enum Filter 
+        { 
+            Gauss,
+            Sharpen, 
+            Motion,
+            Predict
         }
     }
 }

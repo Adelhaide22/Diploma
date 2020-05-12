@@ -7,89 +7,25 @@ namespace ImageInterpolation.Filtering
 {
     public static class WienerFilter
     {
-        public static Bitmap Filter(Bitmap initialImage)
+        public static Bitmap Filter(Bitmap initialImage, ImageHelper.Filter filter)
         {
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = GetComplexImageFromMatrix(GetCore(g, "motion"));
+            var h = ImageHelper.GetComplexImageFromMatrix(GetCore(g, filter));
 
             var average = GetAverage(g.Data);
             var dispersion = GetDispersion(g.Data, average);
             var snr = GetSNR(average, dispersion);
 
-            var G = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(g.Data)));
-            var H = GetComplexImageFromMatrix(ImageHelper.FFT2(ToVector(h.Data)));
+            var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
+            var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
 
             var F = GetF(H, G, 0.015);
 
-            var f = GetComplexImageFromMatrix(ImageHelper.BFT2(ToVector(F.Data)));
+            var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
 
-            //rotate
-            for (int i = 0; i < f.Height/2; i++)
-            {
-                for (int j = 0; j < f.Width/2; j++)
-                {
-                    var t = f.Data[i, j];
-                    f.Data[i, j] = f.Data[i + f.Height / 2, j + f.Width / 2];
-                    f.Data[i + f.Height / 2, j + f.Width / 2] = t;
-
-                    t = f.Data[i + f.Height / 2, j];
-                    f.Data[i + f.Height / 2, j] = f.Data[i, j + f.Width / 2];
-                    f.Data[i, j + f.Width / 2] = t;
-                }
-            }
+            ImageHelper.Rotate(f);            
 
             return f.ToBitmap();
-        }
-
-        private static Complex[] ToVector(Complex[,] data)
-        {
-            var vec = new Complex[data.Length];
-
-            for (int i = 0; i < data.Length; i++)
-            {
-                vec[i] = data[(i - i%data.GetLength(1)) / data.GetLength(1), i % data.GetLength(1)];
-            }
-
-            return vec;
-        }
-        private static ComplexImage GetComplexImageFromMatrix(Complex[,] core)
-        {
-            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
-
-            var bitmap8bpp = bitmap.ConvertTo8bpp();
-            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
-
-            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
-
-            for (int i = 0; i < complexImage.Height; i++)
-            {
-                for (int j = 0; j < complexImage.Width; j++)
-                {
-                    complexImage.Data[i, j] = core[i, j];
-                }
-            }
-
-            return complexImage;
-        }
-
-        private static ComplexImage GetComplexImageFromMatrix(double[,] core)
-        {
-            var bitmap = new Bitmap(core.GetLength(1), core.GetLength(0));
-
-            var bitmap8bpp = bitmap.ConvertTo8bpp();
-            bitmap8bpp.ConvertColor8bppToGrayscale8bpp();
-
-            var complexImage = ComplexImage.FromBitmap(bitmap8bpp);
-
-            for (int i = 0; i < complexImage.Height; i++)
-            {
-                for (int j = 0; j < complexImage.Width; j++)
-                {
-                    complexImage.Data[i, j] = core[i, j];
-                }
-            }
-
-            return complexImage;
         }
 
         private static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex snr)
@@ -116,29 +52,27 @@ namespace ImageInterpolation.Filtering
             return average / Complex.Sqrt(dispersion);
         }
 
-        private static double[,] GetCore(ComplexImage g, string type)
+        public static double[,] GetCore(ComplexImage g, ImageHelper.Filter filter)
         {
             var matrixSize = 0;
             var matrix = new double[matrixSize, matrixSize];
 
-            if (type == "gauss")
+            switch (filter)
             {
-                matrixSize = GaussianFilter.BlurSize;
-                matrix = GaussianFilter.GetCore();
-            }
-            if (type == "sharp")
-            {
-                matrixSize = SharpenFilter.SharpSize;
-                matrix = SharpenFilter.GetCore();
-            }
-            if (type == "motion")
-            {
-                matrixSize = MotionFilter.MotionSize;
-                matrix = MotionFilter.GetCore();
-            }
-            if (type == "predict")
-            {
-
+                case ImageHelper.Filter.Gauss:
+                    matrixSize = GaussianFilter.BlurSize;
+                    matrix = GaussianFilter.GetCore();
+                    break;
+                case ImageHelper.Filter.Sharpen:
+                    matrixSize = SharpenFilter.SharpSize;
+                    matrix = SharpenFilter.GetCore();
+                    break;
+                case ImageHelper.Filter.Motion:
+                    matrixSize = MotionFilter.MotionSize;
+                    matrix = MotionFilter.GetCore();
+                    break;
+                default:
+                    break;
             }
 
             var result = new double[g.Width, g.Height];

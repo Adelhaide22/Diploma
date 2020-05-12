@@ -9,6 +9,8 @@ namespace Lanczos
 {
     public partial class Form1 : Form
     {
+        ImageHelper.Filter Filter; 
+
         public Form1()
         {
             InitializeComponent();
@@ -88,14 +90,30 @@ namespace Lanczos
             var initialImage = (Bitmap)pictureBox1.Image;
 
             var greyImage = ImageHelper.ToGray(initialImage);
-            pictureBox2.Image = greyImage;
-                        
-            var brokenImage = MotionFilter.Motion(greyImage);
-            //var brokenImage = GaussianFilter.Blur(greyImage);
-            //var brokenImage = SharpenFilter.Sharpen(greyImage);
-            pictureBox3.Image = brokenImage;
+            pictureBox1.Image = greyImage;
 
-            var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage));
+            var brokenImage = new Bitmap(greyImage);
+            switch (Filter)
+            {
+                case ImageHelper.Filter.Gauss:
+                    brokenImage = GaussianFilter.Blur(greyImage);
+                    break;
+                case ImageHelper.Filter.Sharpen:
+                    brokenImage = SharpenFilter.Sharpen(greyImage);
+                    break;
+                case ImageHelper.Filter.Motion:
+                    brokenImage = MotionFilter.Motion(greyImage);
+                    break;
+                default:
+                    break;
+            }
+
+            pictureBox2.Image = brokenImage;
+
+            var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), Filter);
+            pictureBox3.Image = coreImage;
+
+            var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
             pictureBox4.Image = reconstructedImage;
 
             sw.Stop();
@@ -114,6 +132,8 @@ namespace Lanczos
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
+
+            Filter = ImageHelper.Filter.Gauss;
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
@@ -128,6 +148,8 @@ namespace Lanczos
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
+
+            Filter = ImageHelper.Filter.Sharpen;
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
@@ -142,6 +164,7 @@ namespace Lanczos
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
+            Filter = ImageHelper.Filter.Motion;
         }
     }
 }
