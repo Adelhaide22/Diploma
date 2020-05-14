@@ -52,7 +52,7 @@ namespace ImageInterpolation.Filtering
 
         public static double[,] GetCore()
         {
-            var direction = Direction.Horizontal;
+            var direction = Direction.LeftToRight;
             var motion = 1;
             var sum = 0d;
 

@@ -365,7 +365,8 @@ namespace ImageInterpolation.Filtering
         public static Bitmap GetCoreImage(Bitmap initialImage, Filter filter)
         {
             var g = ComplexImage.FromBitmap(initialImage);
-            var h = GetComplexImageFromMatrix(WienerFilter.GetCore(g, filter));
+            var core = filter != Filter.Predict ? WienerFilter.GetCore(g, filter) : WienerPredictFilter.Core;
+            var h = GetComplexImageFromMatrix(core);
 
             for (int i = 0; i < h.Height; i++)
             {
@@ -382,7 +383,8 @@ namespace ImageInterpolation.Filtering
         { 
             Gauss,
             Sharpen, 
-            Motion
+            Motion,
+            Predict
         }
     }
 }

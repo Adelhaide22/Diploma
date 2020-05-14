@@ -9,7 +9,8 @@ namespace Lanczos
 {
     public partial class Form1 : Form
     {
-        ImageHelper.Filter Filter; 
+        ImageHelper.Filter Filter;
+        int kernelSize;
 
         public Form1()
         {
@@ -96,13 +97,13 @@ namespace Lanczos
             switch (Filter)
             {
                 case ImageHelper.Filter.Gauss:
-                    brokenImage = GaussianFilter.Blur(greyImage, 25);
+                    brokenImage = GaussianFilter.Blur(greyImage, kernelSize);
                     break;
                 case ImageHelper.Filter.Sharpen:
                     brokenImage = SharpenFilter.Sharpen(greyImage);
                     break;
                 case ImageHelper.Filter.Motion:
-                    brokenImage = MotionFilter.Motion(greyImage, 15);
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize);
                     break;
                 default:
                     break;
@@ -136,13 +137,13 @@ namespace Lanczos
             switch (Filter)
             {
                 case ImageHelper.Filter.Gauss:
-                    brokenImage = GaussianFilter.Blur(greyImage, 15);
+                    brokenImage = GaussianFilter.Blur(greyImage, kernelSize);
                     break;
                 case ImageHelper.Filter.Sharpen:
                     brokenImage = SharpenFilter.Sharpen(greyImage);
                     break;
                 case ImageHelper.Filter.Motion:
-                    brokenImage = MotionFilter.Motion(greyImage, 15);
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize);
                     break;
                 default:
                     break;
@@ -152,8 +153,8 @@ namespace Lanczos
             var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
 
-            //var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage));
-            //pictureBox3.Image = coreImage;
+            var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), ImageHelper.Filter.Predict);
+            pictureBox3.Image = coreImage;
 
             sw.Stop();
             MessageBox.Show($"{ImageHelper.GetMSE(greyImage, reconstructedImage)}");
@@ -165,7 +166,7 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = GaussianFilter.Blur(initialImage);
+            var brokenImage = GaussianFilter.Blur(initialImage, kernelSize);
 
             pictureBox2.Image = brokenImage;
 
@@ -197,12 +198,17 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = MotionFilter.Motion(initialImage);
+            var brokenImage = MotionFilter.Motion(initialImage, kernelSize);
 
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
             Filter = ImageHelper.Filter.Motion;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            kernelSize = int.Parse(textBox1.Text);
         }
     }
 }

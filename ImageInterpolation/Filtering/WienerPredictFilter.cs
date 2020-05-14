@@ -11,6 +11,8 @@ namespace ImageInterpolation.Filtering
 {
     class WienerPredictFilter
     {
+        public static double[,] Core; 
+
         public static Bitmap Filter(Bitmap initialImage)
         {
             var previousf = initialImage;
@@ -60,10 +62,11 @@ namespace ImageInterpolation.Filtering
 
                 if (k > 0)
                 {
-                    prevQuality = ImageHelper.GetMSE(initialImage, previousf);
-                    nextQuality = ImageHelper.GetMSE(initialImage, nextf);
+                    prevQuality = ImageHelper.GetPSNR(initialImage, previousf);
+                    nextQuality = ImageHelper.GetPSNR(initialImage, nextf);
                 }
                 Console.WriteLine($"{prevQuality} {filter} {matrixSize}");
+                Core = core;
                 k++;
             } while (nextQuality - prevQuality > epsMax || nextQuality - prevQuality < epsMin || k < 2);
             
