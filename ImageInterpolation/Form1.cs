@@ -119,7 +119,7 @@ namespace Lanczos
 
             sw.Stop();
 
-            MessageBox.Show($"{ImageHelper.GetMSE(greyImage, reconstructedImage)}");
+            MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
@@ -157,7 +157,7 @@ namespace Lanczos
             pictureBox3.Image = coreImage;
 
             sw.Stop();
-            MessageBox.Show($"{ImageHelper.GetMSE(greyImage, reconstructedImage)}");
+            MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
         }
 
         private void btn_Gaussian_Click(object sender, EventArgs e)
