@@ -5,10 +5,12 @@ namespace ImageInterpolation.Filtering
 {
     public static class SharpenFilter
     {
-        public static int SharpSize { get; set; } = 3;
+        public static int SharpSize { get; set; }
 
-        public static Bitmap Sharpen(Bitmap initialImage)
+        public static Bitmap Sharpen(Bitmap initialImage, int sharpSize = 3)
         {
+            SharpSize = sharpSize;
+
             var extendedImage = ImageHelper.GetExtended(initialImage, SharpSize);
 
             var f = new double[3][,];

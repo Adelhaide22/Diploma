@@ -96,13 +96,13 @@ namespace Lanczos
             switch (Filter)
             {
                 case ImageHelper.Filter.Gauss:
-                    brokenImage = GaussianFilter.Blur(greyImage);
+                    brokenImage = GaussianFilter.Blur(greyImage, 25);
                     break;
                 case ImageHelper.Filter.Sharpen:
                     brokenImage = SharpenFilter.Sharpen(greyImage);
                     break;
                 case ImageHelper.Filter.Motion:
-                    brokenImage = MotionFilter.Motion(greyImage);
+                    brokenImage = MotionFilter.Motion(greyImage, 15);
                     break;
                 default:
                     break;
@@ -118,7 +118,7 @@ namespace Lanczos
 
             sw.Stop();
 
-            MessageBox.Show($"{ImageHelper.GetQuality(greyImage, reconstructedImage)}");
+            MessageBox.Show($"{ImageHelper.GetMSE(greyImage, reconstructedImage)}");
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
 
@@ -132,7 +132,21 @@ namespace Lanczos
             var greyImage = ImageHelper.ToGray(initialImage);
             pictureBox1.Image = greyImage;
 
-            var brokenImage = GaussianFilter.Blur(greyImage, 5);
+            var brokenImage = new Bitmap(greyImage);
+            switch (Filter)
+            {
+                case ImageHelper.Filter.Gauss:
+                    brokenImage = GaussianFilter.Blur(greyImage, 15);
+                    break;
+                case ImageHelper.Filter.Sharpen:
+                    brokenImage = SharpenFilter.Sharpen(greyImage);
+                    break;
+                case ImageHelper.Filter.Motion:
+                    brokenImage = MotionFilter.Motion(greyImage, 15);
+                    break;
+                default:
+                    break;
+            }
             pictureBox2.Image = brokenImage;
 
             var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(brokenImage));
@@ -142,6 +156,7 @@ namespace Lanczos
             //pictureBox3.Image = coreImage;
 
             sw.Stop();
+            MessageBox.Show($"{ImageHelper.GetMSE(greyImage, reconstructedImage)}");
         }
 
         private void btn_Gaussian_Click(object sender, EventArgs e)

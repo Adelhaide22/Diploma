@@ -19,7 +19,8 @@ namespace ImageInterpolation.Filtering
             var prevQuality = 0.0; 
             var nextQuality = 0.0;
             var k = 0;
-            var eps = 1;
+            var epsMax = 1;
+            var epsMin = 0.5;
 
             var matrixSize = 1;
             var filter = ImageHelper.Filter.Gauss;
@@ -30,16 +31,21 @@ namespace ImageInterpolation.Filtering
 
             do
             {
-                previousf = nextf;
-
-                if (nextQuality - prevQuality < eps && k > 1)
+                if (nextQuality - prevQuality < epsMin && k > 1)
                 {
+                    if (filter == ImageHelper.Filter.Motion)
+                    {
+                        return previousf;
+                    }
                     filter++;
+                    matrixSize = 3;
                 }
                 else
                 {
                     matrixSize += 2;
                 }
+
+                previousf = nextf;
 
                 var core = GetCore(g, filter, matrixSize);
 
@@ -54,13 +60,12 @@ namespace ImageInterpolation.Filtering
 
                 if (k > 0)
                 {
-                    prevQuality = ImageHelper.GetQuality(initialImage, previousf);
-                    nextQuality = ImageHelper.GetQuality(initialImage, nextf);
+                    prevQuality = ImageHelper.GetMSE(initialImage, previousf);
+                    nextQuality = ImageHelper.GetMSE(initialImage, nextf);
                 }
-
+                Console.WriteLine($"{prevQuality} {filter} {matrixSize}");
                 k++;
-
-            } while (nextQuality - prevQuality > eps || k < 2);
+            } while (nextQuality - prevQuality > epsMax || nextQuality - prevQuality < epsMin || k < 2);
             
 
             return nextf;

@@ -6,7 +6,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class GaussianFilter
     {
-        public static int BlurSize { get; set; } = 3;
+        public static int BlurSize { get; set; }
 
         public static Bitmap Blur(Bitmap initialImage, int blurSize = 3)
         {
@@ -49,7 +49,7 @@ namespace ImageInterpolation.Filtering
         
         public static double[,] GetCore()
         {
-            var sigma = 7;
+            var sigma = 3;
 
             var sum = 0.0;
             var blurMatrix = new double[BlurSize, BlurSize];

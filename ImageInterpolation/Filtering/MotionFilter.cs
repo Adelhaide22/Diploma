@@ -9,10 +9,12 @@ namespace ImageInterpolation.Filtering
 {
     public static class MotionFilter
     {
-        public static int MotionSize { get; set; } = 5;
+        public static int MotionSize { get; set; }
 
-        public static Bitmap Motion(Bitmap initialImage)
+        public static Bitmap Motion(Bitmap initialImage, int motionSize = 3)
         {
+            MotionSize = motionSize;
+
             var extendedImage = ImageHelper.GetExtended(initialImage, MotionSize);
 
             var f = new double[3][,];
@@ -50,7 +52,7 @@ namespace ImageInterpolation.Filtering
 
         public static double[,] GetCore()
         {
-            var direction = Direction.LeftToRight;
+            var direction = Direction.Horizontal;
             var motion = 1;
             var sum = 0d;
 
@@ -60,20 +62,16 @@ namespace ImageInterpolation.Filtering
             {
                 for (int j = 0; j < MotionSize; j++)
                 {
-                    if (i == j && direction == Direction.LeftToRight)
+                    if ((i == j && direction == Direction.LeftToRight)
+                        || (i == MotionSize - j - 1 && direction == Direction.RightToLeft)
+                        || (j == MotionSize/2 && direction == Direction.Horizontal)
+                        || (i == MotionSize / 2 && direction == Direction.Vertical))
                     {
                         motionMatrix[i, j] = motion;
                     }
                     else
                     {
-                        if (i == MotionSize - j - 1 && direction == Direction.RightToLeft)
-                        {
-                            motionMatrix[i, j] = motion;
-                        }
-                        else
-                        {
-                            motionMatrix[i, j] = 0;
-                        }
+                        motionMatrix[i, j] = 0;                               
                     }
                     sum += motionMatrix[i, j];
                 }
@@ -119,6 +117,8 @@ namespace ImageInterpolation.Filtering
     enum Direction
     {
         RightToLeft,
-        LeftToRight
+        LeftToRight,
+        Horizontal,
+        Vertical
     }
 }

@@ -157,7 +157,7 @@
             // 
             // btn_motion
             // 
-            this.btn_motion.Location = new System.Drawing.Point(33, 429);
+            this.btn_motion.Location = new System.Drawing.Point(33, 562);
             this.btn_motion.Name = "btn_motion";
             this.btn_motion.Size = new System.Drawing.Size(121, 23);
             this.btn_motion.TabIndex = 13;

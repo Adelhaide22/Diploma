@@ -123,7 +123,25 @@ namespace ImageInterpolation.Filtering
             }
         }
 
-        public static double GetQuality(Bitmap origin, Bitmap result)
+        public static double GetMSE(Bitmap origin, Bitmap result)
+        {
+            var n = origin.Width;
+            var m = origin.Height;
+
+            var f = 0.0;
+
+            for (int i = 0; i < m - 1; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    f += Math.Pow((result.GetPixel(i, j).R - origin.GetPixel(i, j).R), 2);
+                }
+            }
+
+            return f/(n*m);
+        }
+
+        public static double GetPSNR(Bitmap origin, Bitmap result)
         {
             var n = origin.Width;
             var m = origin.Height;
