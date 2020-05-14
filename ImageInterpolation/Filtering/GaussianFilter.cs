@@ -6,10 +6,12 @@ namespace ImageInterpolation.Filtering
 {
     public static class GaussianFilter
     {
-        public static int BlurSize = 29;
+        public static int BlurSize { get; set; } = 3;
 
-        public static Bitmap Blur(Bitmap initialImage)
+        public static Bitmap Blur(Bitmap initialImage, int blurSize = 3)
         {
+            BlurSize = blurSize;
+
             var extendedImage = ImageHelper.GetExtended(initialImage, BlurSize);
 
             var f = new double[3][,];

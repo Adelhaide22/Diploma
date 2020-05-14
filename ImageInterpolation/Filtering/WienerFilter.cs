@@ -12,9 +12,7 @@ namespace ImageInterpolation.Filtering
             var g = ComplexImage.FromBitmap(initialImage);
             var h = ImageHelper.GetComplexImageFromMatrix(GetCore(g, filter));
 
-            var average = GetAverage(g.Data);
-            var dispersion = GetDispersion(g.Data, average);
-            var snr = GetSNR(average, dispersion);
+            var snr = GetSNR(g.Data);
 
             var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
             var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
@@ -28,7 +26,7 @@ namespace ImageInterpolation.Filtering
             return f.ToBitmap();
         }
 
-        private static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex snr)
+        public static ComplexImage GetF(ComplexImage H, ComplexImage G, Complex snr)
         {            
             var bitmap = new Bitmap(G.Width, G.Height);
             var bitmap8bpp = bitmap.ConvertTo8bpp();
@@ -47,9 +45,11 @@ namespace ImageInterpolation.Filtering
             return complexImage;
         }
 
-        private static Complex GetSNR(Complex average, Complex dispersion)
+        public static Complex GetSNR(Complex[,] data)
         {
-            return average / Complex.Sqrt(dispersion);
+            var average = GetAverage(data);
+            var dispersion = GetDispersion(data, average);
+            return GetAverage(data) / Complex.Sqrt(dispersion);
         }
 
         public static double[,] GetCore(ComplexImage g, ImageHelper.Filter filter)
@@ -104,7 +104,7 @@ namespace ImageInterpolation.Filtering
             return result;
         }
 
-        private static Complex GetDispersion(Complex[,] layer, Complex average)
+        public static Complex GetDispersion(Complex[,] layer, Complex average)
         {
             var sum = new Complex();
             for (int i = 0; i < layer.GetLength(1); i++)
@@ -118,7 +118,7 @@ namespace ImageInterpolation.Filtering
             return sum / layer.Length;
         }
 
-        private static Complex GetAverage(Complex[,] layer)
+        public static Complex GetAverage(Complex[,] layer)
         {
             var sum = new Complex();
             for (int i = 0; i < layer.GetLength(1); i++)

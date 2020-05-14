@@ -5,7 +5,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class SharpenFilter
     {
-        public static int SharpSize = 3;
+        public static int SharpSize { get; set; } = 3;
 
         public static Bitmap Sharpen(Bitmap initialImage)
         {

@@ -9,7 +9,7 @@ namespace ImageInterpolation.Filtering
 {
     public static class MotionFilter
     {
-        public static int MotionSize = 5;
+        public static int MotionSize { get; set; } = 5;
 
         public static Bitmap Motion(Bitmap initialImage)
         {

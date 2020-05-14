@@ -132,15 +132,14 @@ namespace Lanczos
             var greyImage = ImageHelper.ToGray(initialImage);
             pictureBox1.Image = greyImage;
 
-            var brokenImage = GaussianFilter.Blur(greyImage);
-            Filter = ImageHelper.Filter.Predict;
+            var brokenImage = GaussianFilter.Blur(greyImage, 5);
             pictureBox2.Image = brokenImage;
 
-            var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), Filter);
-            pictureBox3.Image = coreImage;
-
-            var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
+            var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
+
+            //var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage));
+            //pictureBox3.Image = coreImage;
 
             sw.Stop();
         }

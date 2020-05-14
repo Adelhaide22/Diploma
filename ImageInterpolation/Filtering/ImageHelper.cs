@@ -364,8 +364,7 @@ namespace ImageInterpolation.Filtering
         { 
             Gauss,
             Sharpen, 
-            Motion,
-            Predict
+            Motion
         }
     }
 }

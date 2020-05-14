@@ -71,6 +71,7 @@
     <Compile Include="Filtering\MotionFilter.cs" />
     <Compile Include="Filtering\SharpenFilter.cs" />
     <Compile Include="Filtering\WienerFilter.cs" />
+    <Compile Include="Filtering\WienerPredictFilter.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
