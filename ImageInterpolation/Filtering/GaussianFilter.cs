@@ -8,7 +8,7 @@ namespace ImageInterpolation.Filtering
     {
         public static int BlurSize { get; set; }
 
-        public static Bitmap Blur(Bitmap initialImage, int blurSize = 3)
+        public static Bitmap Blur(Bitmap initialImage, int blurSize)
         {
             BlurSize = blurSize;
 

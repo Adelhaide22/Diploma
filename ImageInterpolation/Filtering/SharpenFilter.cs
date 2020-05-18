@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 
 namespace ImageInterpolation.Filtering
@@ -6,12 +7,11 @@ namespace ImageInterpolation.Filtering
     public static class SharpenFilter
     {
         public static int SharpSize { get; set; } = 3;
-        public static int SharpPower { get; set; }
+        public static double SharpPower { get; set; }
 
-        public static Bitmap Sharpen(Bitmap initialImage, int sharpSize = 3)
+        public static Bitmap Sharpen(Bitmap initialImage, int sharpSize)
         {
-            //SharpSize = sharpSize;
-            SharpPower = sharpSize;
+            SharpPower = Convert.ToDouble(sharpSize);
 
             var extendedImage = ImageHelper.GetExtended(initialImage, SharpSize);
 

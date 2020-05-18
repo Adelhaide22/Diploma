@@ -17,7 +17,7 @@ namespace ImageInterpolation.Filtering
             var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
             var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
 
-            var F = GetF(H, G, 0.07);
+            var F = GetF(H, G, 0.015);
 
             var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
 
@@ -60,8 +60,14 @@ namespace ImageInterpolation.Filtering
                     matrixSize = SharpenFilter.SharpSize;
                     matrix = SharpenFilter.GetCore();
                     break;
-                case ImageHelper.Filter.Motion:
+                case ImageHelper.Filter.MotionLeftToRight:
                     matrixSize = MotionFilter.MotionSize;
+                    MotionFilter.Direction = Direction.LeftToRight;
+                    matrix = MotionFilter.GetCore();
+                    break;
+                case ImageHelper.Filter.MotionRightToLeft:
+                    matrixSize = MotionFilter.MotionSize;
+                    MotionFilter.Direction = Direction.RightToLeft;
                     matrix = MotionFilter.GetCore();
                     break;
                 default:

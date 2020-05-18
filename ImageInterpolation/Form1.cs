@@ -100,10 +100,13 @@ namespace Lanczos
                     brokenImage = GaussianFilter.Blur(greyImage, kernelSize);
                     break;
                 case ImageHelper.Filter.Sharpen:
-                    brokenImage = SharpenFilter.Sharpen(greyImage);
+                    brokenImage = SharpenFilter.Sharpen(greyImage, kernelSize);
                     break;
-                case ImageHelper.Filter.Motion:
-                    brokenImage = MotionFilter.Motion(greyImage, kernelSize);
+                case ImageHelper.Filter.MotionLeftToRight:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.LeftToRight);
+                    break;
+                case ImageHelper.Filter.MotionRightToLeft:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.RightToLeft);
                     break;
                 default:
                     break;
@@ -140,10 +143,13 @@ namespace Lanczos
                     brokenImage = GaussianFilter.Blur(greyImage, kernelSize);
                     break;
                 case ImageHelper.Filter.Sharpen:
-                    brokenImage = SharpenFilter.Sharpen(greyImage);
+                    brokenImage = SharpenFilter.Sharpen(greyImage, kernelSize);
                     break;
-                case ImageHelper.Filter.Motion:
-                    brokenImage = MotionFilter.Motion(greyImage, kernelSize);
+                case ImageHelper.Filter.MotionLeftToRight:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.LeftToRight);
+                    break;
+                case ImageHelper.Filter.MotionRightToLeft:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.RightToLeft);
                     break;
                 default:
                     break;
@@ -182,7 +188,7 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = SharpenFilter.Sharpen(initialImage);
+            var brokenImage = SharpenFilter.Sharpen(initialImage, kernelSize);
 
             pictureBox2.Image = brokenImage;
 
@@ -198,12 +204,14 @@ namespace Lanczos
             sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = MotionFilter.Motion(initialImage, kernelSize);
+            //var brokenImage = MotionFilter.Motion(initialImage, kernelSize, Direction.LeftToRight); 
+            var brokenImage = MotionFilter.Motion(initialImage, kernelSize, Direction.RightToLeft);
 
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
-            Filter = ImageHelper.Filter.Motion;
+            Filter = ImageHelper.Filter.MotionLeftToRight;
+            Filter = ImageHelper.Filter.MotionRightToLeft;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

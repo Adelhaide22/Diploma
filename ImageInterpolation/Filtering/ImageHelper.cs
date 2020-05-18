@@ -399,6 +399,20 @@ namespace ImageInterpolation.Filtering
             return sum / layer.Length;
         }
 
+        public static double GetDispersion(Bitmap layer, double average)
+        {
+            var sum = 0.0;
+            for (int i = 0; i < layer.Height; i++)
+            {
+                for (int j = 0; j < layer.Width; j++)
+                {
+                    sum += (layer.GetPixel(i, j).R - average) * (layer.GetPixel(i, j).R - average);
+                }
+            }
+
+            return sum / (layer.Width * layer.Height);
+        }
+
         public static Complex GetAverage(Complex[,] layer)
         {
             var sum = new Complex();
@@ -412,11 +426,51 @@ namespace ImageInterpolation.Filtering
             return sum / layer.Length;
         }
 
+        public static double GetAverage(Bitmap layer)
+        {
+            var sum = 0.0;
+            for (int i = 0; i < layer.Height; i++)
+            {
+                for (int j = 0; j < layer.Width; j++)
+                {
+                    sum += layer.GetPixel(i, j).R;
+                }
+            }
+            return sum / (layer.Width * layer.Height);
+        }
+
+        public static double GetCov(Bitmap x, Bitmap y, double aX, double aY)
+        {
+            var sum = 0.0;
+            for (int i = 0; i < x.Height; i++)
+            {
+                for (int j = 0; j < x.Width; j++)
+                {
+                    sum += (x.GetPixel(i, j).R - aX)*(y.GetPixel(i,j).R - aY);
+                }
+            }
+            return sum / (x.Width * x.Height);
+        }
+
+        public static double GetSSIM(Bitmap x, Bitmap y)
+        {
+            var averageX = GetAverage(x);
+            var averageY = GetAverage(y);
+            var dispersionX = GetDispersion(x, averageX);
+            var dispersionY = GetDispersion(y, averageY);
+            var cov = GetCov(x, y, averageX, averageY);
+            var c1 = Math.Pow(0.01 * 255, 2);
+            var c2 = Math.Pow(0.03 * 255, 2);
+            return ((2 * averageX * averageY + c1) * (2 * cov + c2)) /
+               ((averageX * averageX + averageY * averageY + c1) * (dispersionX + dispersionY + c2));
+        }
+
         public enum Filter 
         { 
             Gauss,
             Sharpen, 
-            Motion,
+            MotionLeftToRight,
+            MotionRightToLeft,
             Predict
         }
     }
