@@ -150,7 +150,7 @@ namespace Lanczos
             }
             pictureBox2.Image = brokenImage;
 
-            var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(brokenImage));
+            var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(greyImage), ImageHelper.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
 
             var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), ImageHelper.Filter.Predict);
@@ -208,7 +208,11 @@ namespace Lanczos
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            kernelSize = int.Parse(textBox1.Text);
+            if (textBox1.Text.Length != 0)
+            {
+                kernelSize = int.Parse(textBox1.Text);
+
+            }
         }
     }
 }

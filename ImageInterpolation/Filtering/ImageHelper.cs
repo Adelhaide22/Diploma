@@ -378,6 +378,39 @@ namespace ImageInterpolation.Filtering
 
             return h.ToBitmap();
         }
+        public static Complex GetSNR(Complex[,] data)
+        {
+            var average = GetAverage(data);
+            var dispersion = GetDispersion(data, average);
+            return GetAverage(data) / Complex.Sqrt(dispersion);
+        }
+
+        public static Complex GetDispersion(Complex[,] layer, Complex average)
+        {
+            var sum = new Complex();
+            for (int i = 0; i < layer.GetLength(1); i++)
+            {
+                for (int j = 0; j < layer.GetLength(0); j++)
+                {
+                    sum += (layer[i, j] - average) * (layer[i, j] - average);
+                }
+            }
+
+            return sum / layer.Length;
+        }
+
+        public static Complex GetAverage(Complex[,] layer)
+        {
+            var sum = new Complex();
+            for (int i = 0; i < layer.GetLength(1); i++)
+            {
+                for (int j = 0; j < layer.GetLength(0); j++)
+                {
+                    sum += layer[i, j];
+                }
+            }
+            return sum / layer.Length;
+        }
 
         public enum Filter 
         { 

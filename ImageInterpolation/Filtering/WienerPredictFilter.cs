@@ -11,42 +11,44 @@ namespace ImageInterpolation.Filtering
 {
     class WienerPredictFilter
     {
-        public static double[,] Core; 
+        public static double[,] Core;
 
-        public static Bitmap Filter(Bitmap initialImage)
+        public static Bitmap Filter(Bitmap initialImage, Bitmap broken)
         {
-            var g = ComplexImage.FromBitmap(initialImage);
+            var g = ComplexImage.FromBitmap(broken);
             var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
-            var snr = WienerFilter.GetSNR(g.Data);
+            var snr = ImageHelper.GetSNR(g.Data);
 
             var filters = new ImageHelper.Filter[]
             {
                 ImageHelper.Filter.Gauss,
-                //ImageHelper.Filter.Sharpen,
+                ImageHelper.Filter.Sharpen,
                 ImageHelper.Filter.Motion,
             };
 
             var bestImages = new Bitmap[filters.Length];
+            var cores = new List<double[,]>();
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var previousf = initialImage;
-                var nextf = initialImage;
+                var previousf = broken;
+                var nextf = broken;
 
                 var prevQuality = 0.0;
                 var nextQuality = 0.0;
                 var k = 0;
                 var matrixSize = 1;
-
                 var eps = 0.1;
+                var core = new double[matrixSize, matrixSize];
 
                 do
                 {
                     matrixSize += 2;
-                    
+                    snr = snrs[matrixSize];
+
                     previousf = nextf;
 
-                    var core = GetCore(g, filters[i], matrixSize);
+                    core = GetCore(g, filters[i], matrixSize);
 
                     var h = ImageHelper.GetComplexImageFromMatrix(core);
                     var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
@@ -63,12 +65,12 @@ namespace ImageInterpolation.Filtering
                         nextQuality = ImageHelper.GetPSNR(initialImage, nextf);
                     }
 
-                    Console.WriteLine($"{prevQuality} {filters[i]} {matrixSize}");
-                    Core = core;
+                    Console.WriteLine($"{nextQuality} {filters[i]} {matrixSize}");
                     k++;
-                } while (nextQuality - prevQuality > eps || k < 2);
+                } while (nextQuality > prevQuality/* > eps*/ || k < 2);
 
                 bestImages[i] = previousf;
+                cores.Add(core);
             }
 
             var psnrs = new List<double>();
@@ -79,50 +81,8 @@ namespace ImageInterpolation.Filtering
             }
 
             var bestIndex = psnrs.IndexOf(psnrs.Max());
+            Core = cores[bestIndex];
             return bestImages[bestIndex];
-
-
-                //do
-                //{
-                //    if (nextQuality - prevQuality < epsMin && k > 1)
-                //    {
-                //        if (filter == ImageHelper.Filter.Motion)
-                //        {
-                //            return previousf;
-                //        }
-                //        filter++;
-                //        matrixSize = 3;
-                //    }
-                //    else
-                //    {
-                //        matrixSize += 2;
-                //    }
-
-                //    previousf = nextf;
-
-                //    var core = GetCore(g, filter, matrixSize);
-
-                //    var h = ImageHelper.GetComplexImageFromMatrix(core);
-                //    var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
-
-                //    var F = WienerFilter.GetF(H, G, 0.015);
-                //    var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
-                //    ImageHelper.Rotate(f);
-
-                //    nextf = f.ToBitmap();
-
-                //    if (k > 0)
-                //    {
-                //        prevQuality = ImageHelper.GetPSNR(initialImage, previousf);
-                //        nextQuality = ImageHelper.GetPSNR(initialImage, nextf);
-                //    }
-                //    Console.WriteLine($"{prevQuality} {filter} {matrixSize}");
-                //    Core = core;
-                //    k++;
-                //} while (nextQuality - prevQuality > eps || nextQuality - prevQuality < epsMin || k < 2);
-
-
-                //return nextf;
         }
 
         public static double[,] GetCore(ComplexImage g, ImageHelper.Filter filter, int matrixSize)
@@ -137,6 +97,7 @@ namespace ImageInterpolation.Filtering
                     break;
                 case ImageHelper.Filter.Sharpen:
                     SharpenFilter.SharpSize = matrixSize;
+                    SharpenFilter.SharpPower = matrixSize;
                     matrix = SharpenFilter.GetCore();
                     break;
                 case ImageHelper.Filter.Motion:
@@ -175,5 +136,29 @@ namespace ImageInterpolation.Filtering
 
             return result;
         }
+
+        private static double[] snrs = new double[]
+        {
+            1,
+            1,
+            0.7,
+            0.7,
+            0.035,
+            0.035,
+            0.028,
+            0.028,
+            0.022,
+            0.022,
+            0.015,
+            0.015,
+            0.0132,
+            0.0132,
+            0.0115,
+            0.0115,
+            0.009,
+            0.009,
+            0.0075,
+            0.0075
+        };
     }
 }

@@ -12,12 +12,12 @@ namespace ImageInterpolation.Filtering
             var g = ComplexImage.FromBitmap(initialImage);
             var h = ImageHelper.GetComplexImageFromMatrix(GetCore(g, filter));
 
-            var snr = GetSNR(g.Data);
+            var snr = ImageHelper.GetSNR(g.Data);
 
             var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
             var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
 
-            var F = GetF(H, G, 0.015);
+            var F = GetF(H, G, 0.07);
 
             var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
 
@@ -43,13 +43,6 @@ namespace ImageInterpolation.Filtering
                 }
             }
             return complexImage;
-        }
-
-        public static Complex GetSNR(Complex[,] data)
-        {
-            var average = GetAverage(data);
-            var dispersion = GetDispersion(data, average);
-            return GetAverage(data) / Complex.Sqrt(dispersion);
         }
 
         public static double[,] GetCore(ComplexImage g, ImageHelper.Filter filter)
@@ -102,34 +95,7 @@ namespace ImageInterpolation.Filtering
             }
 
             return result;
-        }
-
-        public static Complex GetDispersion(Complex[,] layer, Complex average)
-        {
-            var sum = new Complex();
-            for (int i = 0; i < layer.GetLength(1); i++)
-            {
-                for (int j = 0; j < layer.GetLength(0); j++)
-                {
-                    sum += (layer[i, j] - average) * (layer[i, j] - average);
-                }
-            }
-
-            return sum / layer.Length;
-        }
-
-        public static Complex GetAverage(Complex[,] layer)
-        {
-            var sum = new Complex();
-            for (int i = 0; i < layer.GetLength(1); i++)
-            {
-                for (int j = 0; j < layer.GetLength(0); j++)
-                {
-                    sum += layer[i, j];
-                }
-            }
-            return sum / layer.Length;
-        }
+        }        
     }
 }
  

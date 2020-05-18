@@ -5,11 +5,13 @@ namespace ImageInterpolation.Filtering
 {
     public static class SharpenFilter
     {
-        public static int SharpSize { get; set; }
+        public static int SharpSize { get; set; } = 3;
+        public static int SharpPower { get; set; }
 
         public static Bitmap Sharpen(Bitmap initialImage, int sharpSize = 3)
         {
-            SharpSize = sharpSize;
+            //SharpSize = sharpSize;
+            SharpPower = sharpSize;
 
             var extendedImage = ImageHelper.GetExtended(initialImage, SharpSize);
 
@@ -48,7 +50,7 @@ namespace ImageInterpolation.Filtering
 
         public static double[,] GetCore()
         {
-            var sharp = 3d;
+            var sharp = SharpPower;
 
             var sharpMatrix = new double[SharpSize, SharpSize];
             for (int l = 0; l < SharpSize; l++)

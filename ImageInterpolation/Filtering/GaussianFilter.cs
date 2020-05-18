@@ -49,7 +49,7 @@ namespace ImageInterpolation.Filtering
         
         public static double[,] GetCore()
         {
-            var sigma = 3;
+            var sigma = 4;
 
             var sum = 0.0;
             var blurMatrix = new double[BlurSize, BlurSize];
