@@ -17,7 +17,7 @@ namespace ImageInterpolation.Filtering
             var G = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(g.Data)));
             var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
 
-            var F = GetF(H, G, 0.015);
+            var F = GetF(H, G, 0.035);
 
             var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
 

@@ -78,15 +78,13 @@ namespace Lanczos
 
             pictureBox2.Image = resampledImage;      
 
-            sw.Stop();
-                    
+            sw.Stop();                    
 
             MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
         }
         private void btn_Wiener_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
-            sw.Start();
 
             var initialImage = (Bitmap)pictureBox1.Image;
 
@@ -117,6 +115,7 @@ namespace Lanczos
             var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), Filter);
             pictureBox3.Image = coreImage;
 
+            sw.Start();
             var reconstructedImage = WienerFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
             pictureBox4.Image = reconstructedImage;
 
@@ -129,7 +128,6 @@ namespace Lanczos
         private void btn_WienerPredict_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
-            sw.Start();
 
             var initialImage = (Bitmap)pictureBox1.Image;
 
@@ -155,6 +153,7 @@ namespace Lanczos
                     break;
             }
             pictureBox2.Image = brokenImage;
+            sw.Start();
 
             var reconstructedImage = WienerPredictFilter.Filter(ImageHelper.ToGray(greyImage), ImageHelper.ToGray(brokenImage));
             pictureBox4.Image = reconstructedImage;
@@ -163,7 +162,8 @@ namespace Lanczos
             pictureBox3.Image = coreImage;
 
             sw.Stop();
-            MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
+            MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+           // MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
         }
 
         private void btn_Gaussian_Click(object sender, EventArgs e)
@@ -185,17 +185,29 @@ namespace Lanczos
         private void btn_Sharpen_Click(object sender, EventArgs e)
         {
             var sw = new Stopwatch();
-            sw.Start();
 
             var initialImage = (Bitmap)Image.FromFile(openFileDialog1.FileName);
-            var brokenImage = SharpenFilter.Sharpen(initialImage, kernelSize);
+            Bitmap reconstructedImage = (Bitmap)Image.FromFile(openFileDialog1.FileName); ;
+            if (pictureBox2.Image != null)
+            {
+                var brokenImage = (Bitmap)pictureBox2.Image;
 
-            pictureBox2.Image = brokenImage;
+                sw.Start();
+                reconstructedImage = SharpenFilter.Sharpen(brokenImage, kernelSize);
+                pictureBox3.Image = reconstructedImage;
+            }
+            else
+            {
+                sw.Start();
+                var brokenImage = SharpenFilter.Sharpen(initialImage, kernelSize); 
+                pictureBox2.Image = brokenImage;
+            }
 
             sw.Stop();
 
             Filter = ImageHelper.Filter.Sharpen;
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+            MessageBox.Show($"{ImageHelper.GetPSNR(initialImage, reconstructedImage)}");
         }
 
         private void btn_motion_Click(object sender, EventArgs e)
@@ -210,7 +222,7 @@ namespace Lanczos
             pictureBox2.Image = brokenImage;
 
             sw.Stop();
-            Filter = ImageHelper.Filter.MotionLeftToRight;
+            //Filter = ImageHelper.Filter.MotionLeftToRight;
             Filter = ImageHelper.Filter.MotionRightToLeft;
         }
 

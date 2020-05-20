@@ -21,7 +21,7 @@ namespace ImageInterpolation.Filtering
 
             var filters = new ImageHelper.Filter[]
             {
-                ImageHelper.Filter.Gauss,
+                ImageHelper.Filter.Gauss,                
                 ImageHelper.Filter.MotionLeftToRight,
                 ImageHelper.Filter.MotionRightToLeft,
             };
@@ -38,7 +38,7 @@ namespace ImageInterpolation.Filtering
                 var nextQuality = 0.0;
                 var k = 0;
                 var matrixSize = 1;
-                var eps = 0.001;
+                var eps = 0.1;
                 var core = new double[matrixSize, matrixSize];
 
                 do
@@ -53,18 +53,18 @@ namespace ImageInterpolation.Filtering
                     var h = ImageHelper.GetComplexImageFromMatrix(core);
                     var H = ImageHelper.GetComplexImageFromMatrix(ImageHelper.FFT2(ImageHelper.ToVector(h.Data)));
 
-                    var F = WienerFilter.GetF(H, G, 0.015);
+                    var F = WienerFilter.GetF(H, G, snr);
                     var f = ImageHelper.GetComplexImageFromMatrix(ImageHelper.BFT2(ImageHelper.ToVector(F.Data)));
                     ImageHelper.Rotate(f);
 
                     nextf = f.ToBitmap();
 
-                    prevQuality = ImageHelper.GetSSIM(initialImage, previousf);
-                    nextQuality = ImageHelper.GetSSIM(initialImage, nextf);                    
+                    prevQuality = ImageHelper.GetPSNR(initialImage, previousf);
+                    nextQuality = ImageHelper.GetPSNR(initialImage, nextf);                    
 
-                    Console.WriteLine($"{nextQuality} {prevQuality} {filters[i]} {matrixSize}");
+                    //Console.WriteLine($"{nextQuality} {filters[i]} {matrixSize}");
                     k++;
-                } while (nextQuality - prevQuality > eps || k < 3);
+                } while (nextQuality - prevQuality > eps || k < 2);
 
                 bestImages[i] = previousf;
                 cores.Add(core);
@@ -146,8 +146,8 @@ namespace ImageInterpolation.Filtering
             1,
             0.7,
             0.7,
-            0.035,
-            0.035,
+            0.05,
+            0.05,
             0.028,
             0.028,
             0.022,
