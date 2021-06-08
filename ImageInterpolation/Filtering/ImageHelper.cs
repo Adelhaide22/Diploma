@@ -106,6 +106,19 @@ namespace ImageInterpolation.Filtering
             return extended;
         }
 
+        internal static double[,] BitmapToMatrix(Bitmap initialImage)
+        {
+            var result = new double[initialImage.Width, initialImage.Height];
+            for (int i = 0; i < initialImage.Width; i++)
+            {
+                for (int j = 0; j < initialImage.Height; j++)
+                {
+                    result[i, j] = initialImage.GetPixel(i, j).R;
+                }
+            }
+            return result;
+        }
+
         internal static void Rotate(ComplexImage f)
         {
             for (int i = 0; i < f.Height / 2; i++)

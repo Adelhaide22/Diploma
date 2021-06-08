@@ -234,5 +234,48 @@ namespace Lanczos
 
             }
         }
+
+        private void btn_tikh_Click(object sender, EventArgs e)
+        {
+            var sw = new Stopwatch();
+
+            var initialImage = (Bitmap)pictureBox1.Image;
+
+            var greyImage = ImageHelper.ToGray(initialImage);
+            pictureBox1.Image = greyImage;
+
+            var brokenImage = new Bitmap(greyImage);
+            switch (Filter)
+            {
+                case ImageHelper.Filter.Gauss:
+                    brokenImage = GaussianFilter.Blur(greyImage, kernelSize);
+                    break;
+                case ImageHelper.Filter.Sharpen:
+                    brokenImage = SharpenFilter.Sharpen(greyImage, kernelSize);
+                    break;
+                case ImageHelper.Filter.MotionLeftToRight:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.LeftToRight);
+                    break;
+                case ImageHelper.Filter.MotionRightToLeft:
+                    brokenImage = MotionFilter.Motion(greyImage, kernelSize, Direction.RightToLeft);
+                    break;
+                default:
+                    break;
+            }
+
+            pictureBox2.Image = brokenImage;
+
+            var coreImage = ImageHelper.GetCoreImage(ImageHelper.ToGray(brokenImage), Filter);
+            pictureBox3.Image = coreImage;
+
+            sw.Start();
+            var reconstructedImage = TikhonovFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
+            pictureBox4.Image = reconstructedImage;
+
+            sw.Stop();
+
+            MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
+            //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        }
     }
 }
