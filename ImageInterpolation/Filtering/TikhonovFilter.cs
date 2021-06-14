@@ -11,30 +11,29 @@ namespace ImageInterpolation.Filtering
 {
     class TikhonovFilter
     {
-        private static double alpha = 0.0001;
-        private static double delta = 20;
-
-        public static Bitmap Filter(Bitmap initialImage, ImageHelper.Filter filter)
+        public static Bitmap Filter(Bitmap initialImage, ImageHelper.Filter filter, double alpha, double delta)
         {
             var n = initialImage.Width;
 
-            var A = GetA(initialImage);
+            var A = GetA(initialImage, delta);
             var E = GenerateEMatrix(n);
             var At = Matrix.Transpose(A);
 
             var Ea = E.Multiply(alpha);
-            var AtA2 = At.Multiply(A);
+            //var AtA2 = At.Multiply(A);
             var AtA = m(At,A);
             var sum = Ea.Add(AtA);
             var reverseMatrix = sum.Inverse();
 
-            var Wy2 = reverseMatrix.Multiply(At);
+           //var Wy2 = reverseMatrix.Multiply(At);
             var Wy = m(reverseMatrix, At);
             var b = ImageHelper.BitmapToMatrix(initialImage);
-            var a2 = Wy.Multiply(b);
+            //var a2 = Wy.Multiply(b);
             var a = m(Wy,b);
 
-            return a.ToBitmap();
+            var norm = ImageHelper.Normalize(a);
+            return ImageHelper.ToBitmap(norm);
+            //return a.ToBitmap();
         }
 
         private static double[,] GenerateEMatrix(int n)
@@ -47,7 +46,7 @@ namespace ImageInterpolation.Filtering
             return e;
         }
 
-        private static double[,] GetA(Bitmap initialImage)
+        private static double[,] GetA(Bitmap initialImage, double delta)
         {
             var n = initialImage.Width;
             var A = new double[n, n];
@@ -56,13 +55,13 @@ namespace ImageInterpolation.Filtering
             {
                 for (int j = 0; j < n; j++)
                 {
-                    A[i, j] = GetH(i, j);
+                    A[i, j] = GetH(i, j, delta);
                 }
             }
             return A;
         }
 
-        private static double GetH(int x, int ksi)
+        private static double GetH(int x, int ksi, double delta)
         {
             return x- ksi >= 0 && (x - ksi) <= delta
                 ? 1 / delta

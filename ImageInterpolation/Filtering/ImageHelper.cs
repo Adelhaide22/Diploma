@@ -106,6 +106,71 @@ namespace ImageInterpolation.Filtering
             return extended;
         }
 
+        internal static double[,] Normalize(double[,] initialImage)
+        {
+            var max = GetMax(initialImage);
+            var min = GetMin(initialImage);
+
+            var result = new double[initialImage.GetLength(1), initialImage.GetLength(1)];
+            for (int i = 0; i < initialImage.GetLength(1); i++)
+            {
+                for (int j = 0; j < initialImage.GetLength(1); j++)
+                {
+                    result[i, j] = (initialImage[i, j] - min)/(max-min) * 255;
+                }
+            }
+            return result;
+        }
+
+        internal static Bitmap ToBitmap(double[,] initialImage)
+        {
+            var result = new Bitmap(initialImage.GetLength(1), initialImage.GetLength(1));
+            for (int i = 0; i < initialImage.GetLength(1); i++)
+            {
+                for (int j = 0; j < initialImage.GetLength(1); j++)
+                {
+                    result.SetPixel(i, j, Color.FromArgb((int)initialImage[i, j], (int)initialImage[i, j], (int)initialImage[i, j]));
+                }
+            }
+            return result;
+        }
+
+        internal static double GetMin(double[,] initialImage)
+        {
+            var max = initialImage[0, 0];
+            var temp = initialImage[0, 0];
+            for (int i = 0; i < initialImage.GetLength(1); i++)
+            {
+                for (int j = 0; j < initialImage.GetLength(1); j++)
+                {
+                    temp = initialImage[i, j];
+                    if (initialImage[i, j] <= max)
+                    {
+                        max = temp;
+                    }
+                }
+            }
+            return max;
+        }
+
+        internal static double GetMax(double[,] initialImage)
+        {
+            var min = initialImage[0,0];
+            var temp = initialImage[0, 0];
+            for (int i = 0; i < initialImage.GetLength(1); i++)
+            {
+                for (int j = 0; j < initialImage.GetLength(1); j++)
+                {
+                    temp = initialImage[i, j];
+                    if (initialImage[i, j] >= min)
+                    {
+                        min = temp;
+                    }
+                }
+            }
+            return min;
+        }
+
         internal static double[,] BitmapToMatrix(Bitmap initialImage)
         {
             var result = new double[initialImage.Width, initialImage.Height];

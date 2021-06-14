@@ -269,13 +269,39 @@ namespace Lanczos
             pictureBox3.Image = coreImage;
 
             sw.Start();
-            var reconstructedImage = TikhonovFilter.Filter(ImageHelper.ToGray(brokenImage), Filter);
+            var reconstructedImage = TikhonovFilter.Filter(ImageHelper.ToGray(brokenImage), Filter, alpha, delta);
             pictureBox4.Image = reconstructedImage;
 
             sw.Stop();
 
-            MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
+            //MessageBox.Show($"{ImageHelper.GetPSNR(greyImage, reconstructedImage)}");
             //MessageBox.Show(sw.Elapsed.TotalSeconds.ToString());
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            delta = 0.01*rnd.Next(1, 1000);
+            alpha = rnd.NextDouble();
+
+            textBox2_TextChanged(sender, e);
+            textBox3_TextChanged(sender, e);
+            btn_tikh_Click(sender, e);
+
+            //MessageBox.Show($"alpha {alpha} delta {delta}");
+        }
+
+        double delta;
+        double alpha;
+        Random rnd = new Random();
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            textBox2.Text = alpha.ToString();
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            textBox3.Text = delta.ToString();
         }
     }
 }
